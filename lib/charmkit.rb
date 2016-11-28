@@ -1,9 +1,7 @@
 require "charmkit/version"
-require "tty-command"
+require "charmkit/runner"
 
 module Charmkit
-  def Charmkit.run(data)
-    cmd = TTY::Command.new
-    return cmd.run(data)
-  end
+  
 end
+extend Charmkit::Runner
