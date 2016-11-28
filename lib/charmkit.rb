@@ -1,5 +1,5 @@
-require "charmkit/version"
 require "charmkit/runner"
+require "charmkit/version"
 
 module Charmkit
   
