@@ -18,8 +18,8 @@ module Charmkit
 
     # calls status-set in juju environment
     def status(level="maintenance", msg="")
-      level = level.to_sym if level.is_a? String
-      run "status-set #{level.to_s} #{msg}"
+      level = level.to_s if level.is_a? Symbol
+      run "status-set #{level} #{msg}"
     end
 
     # installs apt packages
