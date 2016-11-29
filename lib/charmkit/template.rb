@@ -13,6 +13,7 @@ module Charmkit
         ERB.new(template_content).result(b)
       end
     end
+
     def template(src, dst, **context)
       rendered = TemplateRenderer.render(File.read(src), context)
       File.write(dst, rendered)

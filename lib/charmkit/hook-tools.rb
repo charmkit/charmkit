@@ -23,5 +23,18 @@ module Charmkit
       return out.chomp
     end
 
+    def action(item)
+      out, err = run "action-get #{item}"
+      return out.chomp
+    end
+
+    def action=(item)
+      out, err = run "action-set #{item}"
+      return out.chomp
+    end
+
+    def log(msg)
+      run "juju-log #{msg}"
+    end
   end
 end
