@@ -15,7 +15,11 @@ module Charmkit
     end
 
     def mkdir(path)
-      FileUtils.mkdir_p path unless is_dir? path
+      FileUtils.mkdir_p path
+    end
+
+    def rm(path)
+      FileUtils.rm_rf(path, :force => true)
     end
   end
 end
