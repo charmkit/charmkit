@@ -11,5 +11,11 @@ module Charmkit
     def is_dir?(path)
       return Dir.exists? path
     end
+    def spew(dst, content)
+      File.write(dst, content)
+    end
+    def slurp(src)
+      return File.read(src)
+    end
   end
 end
