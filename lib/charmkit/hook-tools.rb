@@ -9,15 +9,18 @@ module Charmkit
     end
 
     def config(item)
-      run "config-get #{item}"
+      out, err = run "config-get #{item}"
+      return out.chomp
     end
 
     def resource(item)
-      run "resource-get #{item}"
+      out, err = run "resource-get #{item}"
+      return out.chomp
     end
 
     def unit(item)
-      run "unit-get #{item}"
+      out, err = run "unit-get #{item}"
+      return out.chomp
     end
 
   end
