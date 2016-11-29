@@ -3,9 +3,9 @@ module Charmkit
   module DSL
     # calls status-set in juju environment
     def status(level=:maintenance, msg="")
-      levels = [:maintenance, :active, :blocked]
+      levels = [:maintenance, :active, :blocked, :waiting]
       raise unless levels.include?(level)
-      run "status-set #{level.to_s} #{msg}"
+      run "status-set #{level.to_s} '#{msg}'"
     end
 
     def config(item)
