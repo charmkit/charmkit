@@ -9,27 +9,27 @@ module Charmkit
     end
 
     def config(item)
-      out, err = run "config-get #{item}"
+      out, err = run "config-get '#{item}'"
       return out.chomp
     end
 
     def resource(item)
-      out, err = run "resource-get #{item}"
+      out, err = run "resource-get '#{item}'"
       return out.chomp
     end
 
     def unit(item)
-      out, err = run "unit-get #{item}"
+      out, err = run "unit-get '#{item}'"
       return out.chomp
     end
 
     def action(item)
-      out, err = run "action-get #{item}"
+      out, err = run "action-get '#{item}'"
       return out.chomp
     end
 
     def action=(item)
-      out, err = run "action-set #{item}"
+      out, err = run "action-set '#{item}'"
       return out.chomp
     end
 

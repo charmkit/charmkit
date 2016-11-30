@@ -1,0 +1,137 @@
+# -*- mode:ruby -*-
+
+name "dokuwiki"
+summary "Dokuwiki is a simple to use wiki"
+desc <<~EOF
+DokuWiki is a simple to use and highly versatile Open Source wiki software
+that doesn't require a database. It is loved by users for its clean and
+readable syntax.
+EOF
+maintainer 'Adam Stokes <adam.stokes@ubuntu.com>'
+license 'MIT'
+copyright_holder 'Canonical Ltd.'
+copyright_year '2016'
+url "https://github.com/battlemidget/juju-charm-dokuwiki.rb"
+bugs "https://github.com/battlemidget/juju-charm-dokuwiki.rb/issues"
+
+series "xenial"
+series "trusty"
+
+# CONFIG ######################################################################
+# These items will be exposed to the charm via `config-get`
+config "app_path" do
+  type :string
+  default "/srv/app"
+  desc "Where to store dokuwiki source"
+end
+
+config "release" do
+  type :string
+  default "/srv/app"
+  desc "Dokuwiki release"
+end
+
+config "admin_user" do
+  type :string
+  default "admin"
+  desc "Admin username (default: admin)"
+end
+
+config "admin_password" do
+  type :string
+  default "5f4dcc3b5aa765d61d8327deb882cf99"
+  desc "Admin password md5 hash format (default password: password)"
+end
+
+config "admin_name" do
+  type :string
+  default "The Admin"
+  desc "Name of admin"
+end
+
+config "admin_email" do
+  type :string
+  default "adam@root.me"
+  desc "Admin email"
+end
+# END #########################################################################
+
+# RESOURCES ###################################################################
+# These items will be exposed to the charm via `resource-get`
+resource "stable-release" do
+  type :file
+  filename "stable.tgz"
+  desc "Dokuwiki stable"
+end
+
+resource "development-release" do
+  type :file
+  filename "deveopment.tgz"
+  desc "Dokuwiki development"
+end
+# END #########################################################################
+
+depends_on "nginx-full"
+depends_on "php-fpm"
+depends_on "php-cgi"
+depends_on "php-curl"
+depends_on "php-gd"
+depends_on "php-json"
+depends_on "php-mcrypt"
+depends_on "php-readline"
+depends_on "php-mbstring"
+depends_on "php-xml"
+
+hook "install" do
+  release = "#{config['release']}-release"
+  app_path = config 'app_path'
+  hook_path = ENV['JUJU_CHARM_DIR']
+  run "tar xf #{resource[release]} -C #{app_path} --strip-components=1"
+  rm "#{app_path}/conf/install.php" if is_file? "#{app_path}/conf/install.php"
+  cp "#{hook_path}/templates/acl.auth.php", "#{app_path}/conf/acl.auth.php"
+  cp "#{hook_path}/templates/local.php", "#{app_path}/conf/local.php"
+  cp "#{hook_path}/templates/plugins.local.php", "#{app_path}/conf/plugin.local.php"
+  file "/etc/dokuwiki-release", content: release
+  case release
+  when "stable"
+    version = cat "#{app_path}/VERSION"
+    run "application-version-set '#{version}'"
+  when "development"
+    t = Time.now
+    version = t.strftime "%Y-%m-%d"
+    run "application-version-set 'development-#{version}'"
+  else
+    status :blocked, "Unable to set proper application version"
+    exit 1
+  end
+end
+
+hook "config-changed" do
+  app_path = config 'app_path'
+  hook_path = ENV['JUJU_CHARM_DIR']
+  installed_release = cat "/etc/dokuwiki-release"
+  release = config 'release'
+  if !installed_release.eql? release
+    run './hooks/install'
+  end
+
+  admin_user = config 'admin_user'
+  admin_password = config 'admin_password'
+  admin_name = config 'admin_name'
+  admin_email = config 'admin_email'
+  template "#{hook_path}/templates/users.auth.php",
+           "#{app_path}/conf/users.auth.php",
+           admin_user: admin_user,
+           admin_password: admin_password,
+           admin_name: admin_name,
+           admin_email: admin_email
+
+  template "#{hook_path}/templates/vhost.conf",
+           "/etc/nginx/sites-enabled/default",
+           public_address: unit['public-address'],
+           app_path: app_path
+
+  chown_R 'www-data', 'www-data', app_path
+  run "systemctl restart nginx"
+  status :active, "Ready"
+end
