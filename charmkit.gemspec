@@ -5,7 +5,7 @@ require 'charmkit/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "charmkit"
-  spec.version       = Charmkit::VERSION
+  spec.version       = Charmkit.version
   spec.authors       = ["Adam Stokes"]
   spec.email         = ["battlemidget@users.noreply.github.com"]
 
