@@ -4,7 +4,7 @@
 # require "charmkit/template"
 # require "charmkit/fs"
 require "charmkit/version"
-require "charmkit/cmd"
+require "hook"
 
 module Charmkit end
 # extend Charmkit::DSL

@@ -1,25 +1,12 @@
 #!/usr/bin/env ruby
-require 'charmkit/hook-installer'
+
+require "charmkit"
 
 if ARGV.length > 1
   raise "To many arguments."
 end
 
-def eval_script filename, arguments
-  proc = Proc.new {}
-  eval(File.read(filename), proc.binding, filename)
-end
-
-# begin
-#   ck_file = load "Charmkitfile"
-# rescue
-#   ck_file = load "../Charmkitfile"
-# ensure
-#   puts "Unable to find Charmkitfile."
-# end
 puts "Loading #{ARGV[0]}"
-mod = Module.new
-mod.module_eval(File.read(ARGV[0]), ARGV[0])
-puts mod.inspect
-# hook = Charmkit::HookInstaller.new(mod)
-# hook.run
+Object.class_eval File.read(ARGV[0])
+hook = Install.new
+hook.install
