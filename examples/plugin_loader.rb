@@ -1,8 +1,11 @@
 require 'charmkit'
 
 class Onoe < Charmkit
-  plugin :hello_world
+  plugin :core
 
-  say_what_one_more_time
+  def test
+    puts run 'ls -l /tmp'
+  end
 end
 
+Onoe.new.test

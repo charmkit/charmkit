@@ -1,9 +1,3 @@
-# require "charmkit/runner"
-# require "charmkit/hook-tools"
-# require "charmkit/package"
-# require "charmkit/template"
-# require "charmkit/fs"
-# extend Charmkit::DSL
 require "charmkit/version"
 
 class Charmkit
