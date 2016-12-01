@@ -1,9 +1,10 @@
-require "charmkit/runner"
-require "charmkit/hook-tools"
-require "charmkit/package"
-require "charmkit/template"
-require "charmkit/fs"
+# require "charmkit/runner"
+# require "charmkit/hook-tools"
+# require "charmkit/package"
+# require "charmkit/template"
+# require "charmkit/fs"
 require "charmkit/version"
+require "charmkit/cmd"
 
 module Charmkit end
-extend Charmkit::DSL
+# extend Charmkit::DSL
