@@ -71,7 +71,6 @@ require 'charmkit'
 
 class ConfigChanged < Charmkit
   plugin :core
-  plugin :hookenv
 
   def summon
     package [
@@ -84,21 +83,11 @@ class ConfigChanged < Charmkit
 
     mkdir app_path unless is_dir? app_path
 
-    release = config 'release'
-
-    case release
-    when "stable"
-      resource_path = resource 'stable-release'
-    when "development"
-      resource_path = resource 'development-release'
-    else
-      status :blocked, "Unknown release given #{release}"
-      exit 1
-    end
-
+    resource_path = resource 'stable-release'
     run "tar xf #{resource_path} -C #{app_path} --strip-components=1"
 
     rm "#{app_path}/conf/install.php" unless !is_file? "#{app_path}/conf/install.php"
+    status :active, "Dokuwiki configuration updated."
   end
 end
 ```
