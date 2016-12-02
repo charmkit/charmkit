@@ -22,13 +22,16 @@ Or install it yourself as:
 In **hooks/install**:
 
 ```
-#!/bin/bash
+#!/bin/sh
 
 apt-get update
 apt-get install -qyf ruby
 gem install bundler
 
 bundle install --local --quiet
+
+# Runs the lib/install.rb hook
+bundle exec charmkit install
 ```
 
 In other hooks call *charmkit* with the execing hook (eg. **hooks/config-changed**)
