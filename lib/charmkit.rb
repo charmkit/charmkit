@@ -33,6 +33,11 @@ class Charmkit
               subclass.opts[key] = value.dup
             end
           end
+          # ENV.each do |k, v|
+          #   subclass.instance_variable_set("@#{k.downcase}", v) if k.include? "JUJU"
+          # end
+
+
         end
         def plugin(plugin, *args, &block)
           plugin = Plugins.load_plugin(plugin) if plugin.is_a?(Symbol)

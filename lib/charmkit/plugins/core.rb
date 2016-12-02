@@ -13,10 +13,25 @@ class Charmkit
           define_method m, FileUtils.method(m).to_proc
         end
 
-        def file(dst, content:)
+        # Create a file with data
+        #
+        # @param dst String
+        # @param content String
+        # @return nil
+        #
+        # @example
+        #    file "/etc/nginx/nginx.conf", "Some data"
+        def file(dst, content)
           File.write(dst, content)
         end
 
+        # Check if file exists
+        #
+        # @param path String
+        # @return Boolean
+        #
+        # @example
+        #    is_file? "/etc/nginx/nginx.conf"
         def is_file?(path)
           return File.exists? path
         end
