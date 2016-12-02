@@ -3,7 +3,7 @@ class Charmkit
     module NGINXPlugin
       module InstanceMethods
         class NGINX
-          include Charmkit::Plugins::Core::InstanceMethods
+          include Charmkit::Helpers::FS
           def initialize
             if !is_installed? 'nginx-full'
               status :maintenance, 'Installing NGINX'
