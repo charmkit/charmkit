@@ -1,11 +1,9 @@
 require 'charmkit'
 
-class Onoe < Charmkit
+class Install < Charmkit
   plugin :core
 
-  def test
+  def summon
     puts run 'ls -l /tmp'
   end
 end
-
-Onoe.new.test

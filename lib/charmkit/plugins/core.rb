@@ -5,7 +5,7 @@ require 'erb'
 class Charmkit
   module Plugins
     module Core
-      module ClassMethods
+      module InstanceMethods
         FileUtils.singleton_methods.each do |m|
           define_method m, FileUtils.method(m).to_proc
         end

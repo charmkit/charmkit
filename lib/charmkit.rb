@@ -42,12 +42,25 @@ class Charmkit
           plugin.configure(self, *args, &block) if plugin.respond_to?(:configure)
           nil
         end
+
       end
       module InstanceMethods
         # The class-level options hash. This should probably not be modified at
         # the instance level.
         def opts
           self.class.opts
+        end
+
+        # This performs the actual work of installing, configuring, restarting
+        # of services.
+        #
+        #    class Install < Charmkit
+        #      def summon
+        #        cp "#{ENV['JUJU_CHARM_DIR']}/templates/nginx.conf.tpl",
+        #           "/etc/nginx/nginx.conf"
+        #      end
+        #    end
+        def summon
         end
       end
     end
