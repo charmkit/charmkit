@@ -1,7 +1,7 @@
 class Charmkit
   module Plugins
     module HookEnv
-      module ClassMethods
+      module InstanceMethods
         # calls status-set in juju environment
         def status(level=:maintenance, msg="")
           levels = [:maintenance, :active, :blocked, :waiting]
