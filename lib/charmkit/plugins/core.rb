@@ -5,6 +5,9 @@ require 'erb'
 class Charmkit
   module Plugins
     module Core
+      def self.load_dependencies(ck, *)
+        ck.plugin :hookenv
+      end
       module InstanceMethods
         FileUtils.singleton_methods.each do |m|
           define_method m, FileUtils.method(m).to_proc
