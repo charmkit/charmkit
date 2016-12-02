@@ -25,7 +25,7 @@ In **hooks/install**:
 #!/bin/sh
 
 apt-get update
-apt-get install -qyf ruby
+apt-get install -qyf ruby --no-install-recommends
 gem install bundler
 
 bundle install --local --quiet
