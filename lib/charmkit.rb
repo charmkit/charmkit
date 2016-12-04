@@ -56,17 +56,6 @@ class Charmkit
           self.class.opts
         end
 
-        # This performs the actual work of installing, configuring, restarting
-        # of services.
-        #
-        #    class Install < Charmkit
-        #      def summon
-        #        cp "#{ENV['JUJU_CHARM_DIR']}/templates/nginx.conf.tpl",
-        #           "/etc/nginx/nginx.conf"
-        #      end
-        #    end
-        def summon
-        end
       end
     end
   end

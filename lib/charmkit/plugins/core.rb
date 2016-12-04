@@ -6,7 +6,7 @@ class Charmkit
       # def self.load_dependencies(ck, *)
       #   ck.plugin :hookenv
       # end
-      module InstanceMethods
+      module ClassMethods
         include Charmkit::Helpers::FS
       end
     end

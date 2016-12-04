@@ -17,5 +17,4 @@ else
 end
 
 puts "Loading #{hook_name}"
-m = Object.const_get(hook_name.classify).new
-m.summon
+Object.const_get(hook_name.classify).new
