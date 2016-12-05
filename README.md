@@ -32,7 +32,6 @@ apt-get install -qyf ruby bundler --no-install-recommends
 
 bundle install --local --quiet
 
-# Runs the lib/install.rb hook
 bundle exec rake dokuwiki:install
 ```
 
