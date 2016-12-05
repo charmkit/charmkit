@@ -1,23 +1,7 @@
-class Charmkit
-  module Plugins
-    module NGINXPlugin
-      module InstanceMethods
-        class NGINX
-          include Charmkit::Helpers::FS
-          def initialize
-            if !is_installed? 'nginx-full'
-              status :maintenance, 'Installing NGINX'
-              package ['nginx-full']
-              status :active, "NGINX installed."
-            end
-            yield(self)
-          end
-          def install_vhost
-            puts "installing vhost"
-          end
-        end
-      end
-    end
-    register_plugin(:nginx, NGINXPlugin)
+namespace :nginx do
+  desc "Install NGINX"
+  task :install do
+    `apt-get update`
+    `apt-get install nginx-full`
   end
 end
