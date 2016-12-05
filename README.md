@@ -19,6 +19,9 @@ Or install it yourself as:
 
 ## Usage
 
+Define all install, configure, upgrade tasks within a normal **Rakefile**. The
+hooks will then need to just call those tasks:
+
 In **hooks/install**:
 
 ```
@@ -31,7 +34,7 @@ gem install bundler
 bundle install --local --quiet
 
 # Runs the lib/install.rb hook
-bundle exec charmkit install
+bundle exec rake dokuwiki:install
 ```
 
 In other hooks call *charmkit* with the execing hook (eg. **hooks/config-changed**)
@@ -39,7 +42,7 @@ In other hooks call *charmkit* with the execing hook (eg. **hooks/config-changed
 ```
 #!/bin/sh
 
-bundle exec charmkit config-changed
+bundle exec rake dokuwiki:config_changed
 ```
 
 Same for **hooks/upgrade-charm**
@@ -47,56 +50,83 @@ Same for **hooks/upgrade-charm**
 ```
 #!/bin/sh
 
-bundle exec charmkit upgrade-charm
+bundle exec rake dokuwiki:install
+bundle exec rake dokuwiki:config_changed
+
 ```
 
 ## Writing Charmkit style hooks
 
-All Charmkit hooks must reside in the charm's toplevel **lib/** directory. Those
-files must match the name of the hook you want to assicate to and must end with
-a **.rb** extension.
-
-For example, if my hook runs `bundle exec charmkit config-changed` then in my
-**lib/** directory should exist a file named **lib/config-changed.rb**.
-
-To start, you'll want to inherit from the **Charmkit** class. The class name should also
-reflect the name of the hook being executed and should be in a standard Ruby camelcase style.
-
-See the syntax below for a the **config-changed** hook being run:
+All Charmkit hooks will reside in a normal **Rakefile**.
 
 ### Syntax
 
 ```ruby
-require 'charmkit'
+namespace :dokuwiki do
 
-class ConfigChanged < Charmkit
-  plugin :core
+  desc "Install required apt packages"
+  task :install_deps do
+    pkgs = [
+      'nginx-full', 'php-fpm',      'php-cgi',      'php-curl', 'php-gd', 'php-json',
+      'php-mcrypt', 'php-readline', 'php-mbstring', 'php-xml'
+    ]
+    `apt-get update`
+    `apt-get install -qyf #{pkgs.join(' ')}`
+  end
 
-  def summon
-    package [
-        'nginx-full', 'php-fpm',      'php-cgi',      'php-curl', 'php-gd', 'php-json',
-        'php-mcrypt', 'php-readline', 'php-mbstring', 'php-xml'
-    ], :update_cache
-
+  desc "Install Dokuwiki"
+  task :install => [:install_deps] do
+    app_path = `config-get app_path`
+    resource_path = `resource-get stable-release`
     hook_path = ENV['JUJU_CHARM_DIR']
-    app_path = config 'app_path'
 
-    mkdir app_path unless is_dir? app_path
+    mkdir_p app_path unless Dir.exists? app_path
 
-    resource_path = resource 'stable-release'
-    run "tar xf #{resource_path} -C #{app_path} --strip-components=1"
+    `tar xf #{resource_path} -C #{app_path} --strip-components=1`
+    rm "#{app_path}/conf/install.php" if File.exists? "#{app_path}/conf/install.php"
+    cp "#{hook_path}/templates/acl.auth.php", "#{app_path}/conf/acl.auth.php"
+    cp "#{hook_path}/templates/local.php", "#{app_path}/conf/local.php"
+    cp "#{hook_path}/templates/plugins.local.php", "#{app_path}/conf/plugin.local.php"
 
-    rm "#{app_path}/conf/install.php" unless !is_file? "#{app_path}/conf/install.php"
-    status :active, "Dokuwiki configuration updated."
+    version = File.read "#{app_path}/VERSION"
+    `application-version-set '#{version}'`
+    `status-set active Dokuwiki Install finished.`
+  end
+
+  desc "Configure Dokuwiki"
+  task :config_changed do
+    app_path = `config-get app_path`
+    hook_path = ENV['JUJU_CHARM_DIR']
+
+    admin_user = `config-get #{admin_user}`
+    admin_password = `config-get admin_password`
+    admin_name = `config-get admin_name`
+    admin_email = `config-get admin_email`
+    template "#{hook_path}/templates/users.auth.php",
+             "#{app_path}/conf/users.auth.php",
+             admin_user: admin_user,
+             admin_password: admin_password,
+             admin_name: admin_name,
+             admin_email: admin_email
+
+    template "#{hook_path}/templates/vhost.conf",
+             "/etc/nginx/sites-enabled/default",
+             public_address: unit('public-address'),
+             app_path: app_path
+
+    chown_R 'www-data', 'www-data', app_path
+
+    # TODO: service :restart, "nginx"
+    # TODO: service :restart, "php7.0-fpm"
+    `systemctl restart php7.0-fpm`
+    `systemctl restart nginx`
+    `status-set active Ready`
   end
 end
 ```
 
-The core of Charmkit is relatively small and everything is handled through
-plugins. Current plugins are:
-
-* core - Gives you access to things like *package*, *mkdir_p*, *chown_R*, etc.
-* hookenv - Provides access to Juju hook items such as *resource*, *unit*, *juju-log*, etc.
+The core of Charmkit contains a few helpers such as template rendering but
+otherwise kept relatively small.
 
 ## Packaging the Charm
 
