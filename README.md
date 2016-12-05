@@ -62,6 +62,8 @@ All Charmkit hooks will reside in a normal **Rakefile**.
 ### Syntax
 
 ```ruby
+require 'charmkit'
+
 namespace :dokuwiki do
 
   desc "Install required apt packages"
