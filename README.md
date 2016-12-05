@@ -28,8 +28,7 @@ In **hooks/install**:
 #!/bin/sh
 
 apt-get update
-apt-get install -qyf ruby --no-install-recommends
-gem install bundler
+apt-get install -qyf ruby bundler --no-install-recommends
 
 bundle install --local --quiet
 
@@ -63,21 +62,13 @@ All Charmkit hooks will reside in a normal **Rakefile**.
 
 ```ruby
 require 'charmkit'
+require 'charmkit/plugins/nginx'
+require 'charmkit/plugins/php'
 
 namespace :dokuwiki do
 
-  desc "Install required apt packages"
-  task :install_deps do
-    pkgs = [
-      'nginx-full', 'php-fpm',      'php-cgi',      'php-curl', 'php-gd', 'php-json',
-      'php-mcrypt', 'php-readline', 'php-mbstring', 'php-xml'
-    ]
-    `apt-get update`
-    `apt-get install -qyf #{pkgs.join(' ')}`
-  end
-
   desc "Install Dokuwiki"
-  task :install => [:install_deps] do
+  task :install => ["nginx:install", "php:install"] do
     app_path = `config-get app_path`
     resource_path = `resource-get stable-release`
     hook_path = ENV['JUJU_CHARM_DIR']
@@ -129,6 +120,9 @@ end
 
 The core of Charmkit contains a few helpers such as template rendering but
 otherwise kept relatively small.
+
+**Charmkit** does have a sense of "plugins" which are really **rake** tasks that
+reside in *charmkit/plugin/{name}* as seen in the example syntax above.
 
 ## Packaging the Charm
 
