@@ -2,9 +2,8 @@ require 'tty-command'
 
 module Charmkit
   module Helpers
-    def run(*cmd)
-      runner = TTY::Command.new
-      return runner.run(*cmd)
+    def cmd
+      return TTY::Command.new
     end
   end
 end
