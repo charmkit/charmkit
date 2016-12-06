@@ -1,8 +1,6 @@
 require "charmkit/version"
 require "charmkit/helpers/template"
+require "charmkit/helpers/runner"
 
-module Charmkit
-  # A generic exception by Charmkit
-  class Error < StandardError; end
-end
+module Charmkit; end
 extend Charmkit::Helpers
