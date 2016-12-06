@@ -35,7 +35,8 @@ bundle install --local --quiet
 bundle exec rake dokuwiki:install
 ```
 
-In other hooks call *charmkit* with the execing hook (eg. **hooks/config-changed**)
+In other hooks call the relevant rake tasks, for example, in
+**hooks/config-changed**:
 
 ```
 #!/bin/sh
@@ -49,8 +50,6 @@ Same for **hooks/upgrade-charm**
 #!/bin/sh
 
 bundle exec rake dokuwiki:install
-bundle exec rake dokuwiki:config_changed
-
 ```
 
 ## Writing Charmkit style hooks
