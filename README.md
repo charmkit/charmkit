@@ -123,6 +123,38 @@ otherwise kept relatively small.
 **Charmkit** does have a sense of "plugins" which are really **rake** tasks that
 reside in *charmkit/plugin/{name}* as seen in the example syntax above.
 
+## Using local plugins
+
+In addition to the plugins(read: rake tasks) you can add your own to the charm
+itself. To add a task either create a directory inside your charm (eg.
+**tasks**) and name the file something relvant. For example, to create a plugin
+that will install **vim** you would do the following inside your charm directory:
+
+Create a file **tasks/vim.rb** with the below syntax:
+
+```ruby
+namespace :vim do
+  desc "install vim"
+  task :install do
+   system("apt-get install -qyf vim")
+  end
+end
+```
+
+And in your **Rakefile** include it in using the **require_relative** syntax:
+
+```ruby
+require 'charmkit'
+require_relative 'tasks/vim'
+```
+
+Now you can install **vim** with the rake command or utilize the tasks inside
+your **Rakefile**:
+
+```
+bundle exec rake vim:install
+```
+
 ## Packaging the Charm
 
 You'll want to make sure that any Ruby gems used are packaged with your charm so
