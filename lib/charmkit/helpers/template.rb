@@ -34,7 +34,7 @@ module Charmkit
 
     # Reads from a embedded template in the rake task itself.
     #
-    # @param src String - The data found after __END__
+    # @param name String - The @@ filename found after __END__
     # @param dst String - Save location
     # @param context Hash - variables to pass into template
     # @return Boolean

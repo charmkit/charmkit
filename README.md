@@ -1,6 +1,8 @@
 # Charmkit [![Gem Version](https://badge.fury.io/rb/charmkit.svg)](https://badge.fury.io/rb/charmkit)
 > elegantly elegant charm authoring
 
+*Still considered alpha software, things will change, use with caution.*
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -67,32 +69,32 @@ namespace :dokuwiki do
 
   desc "Install Dokuwiki"
   task :install => ["nginx:install", "php:install"] do
-    app_path = `config-get app_path`
-    resource_path = `resource-get stable-release`
+    app_path = cmd.run('config-get', 'app_path').out.chomp
+    resource_path = cmd.run('resource-get', 'stable-release').out.chomp
     hook_path = ENV['JUJU_CHARM_DIR']
 
     mkdir_p app_path unless Dir.exists? app_path
 
-    `tar xf #{resource_path} -C #{app_path} --strip-components=1`
-    rm "#{app_path}/conf/install.php" if File.exists? "#{app_path}/conf/install.php"
+    cmd.run "tar", "xf", resource_path, "-C", app_path, "--strip-components=1"
+
     cp "#{hook_path}/templates/acl.auth.php", "#{app_path}/conf/acl.auth.php"
     cp "#{hook_path}/templates/local.php", "#{app_path}/conf/local.php"
     cp "#{hook_path}/templates/plugins.local.php", "#{app_path}/conf/plugin.local.php"
 
     version = File.read "#{app_path}/VERSION"
-    `application-version-set '#{version}'`
-    `status-set active Dokuwiki Install finished.`
+    cmd.run "application-version-set", version.chomp
+    cmd.run "status-set", "active", "Dokuwiki Install finished."
   end
 
   desc "Configure Dokuwiki"
   task :config_changed do
-    app_path = `config-get app_path`
+    app_path = cmd.run('config-get', 'app_path').out.chomp
     hook_path = ENV['JUJU_CHARM_DIR']
 
-    admin_user = `config-get #{admin_user}`
-    admin_password = `config-get admin_password`
-    admin_name = `config-get admin_name`
-    admin_email = `config-get admin_email`
+    admin_user = cmd.run('config-get', 'admin_user').out.chomp
+    admin_password = cmd.run('config-get', 'admin_password').out.chomp
+    admin_name = cmd.run('config-get', 'admin_name').out.chomp
+    admin_email = cmd.run('config-get', 'admin_email').out.chomp
     template "#{hook_path}/templates/users.auth.php",
              "#{app_path}/conf/users.auth.php",
              admin_user: admin_user,
@@ -100,27 +102,28 @@ namespace :dokuwiki do
              admin_name: admin_name,
              admin_email: admin_email
 
+    public_address = cmd.run('unit-get', 'public-address').out.chomp
     template "#{hook_path}/templates/vhost.conf",
              "/etc/nginx/sites-enabled/default",
-             public_address: unit('public-address'),
+             public_address: public_address,
              app_path: app_path
 
     chown_R 'www-data', 'www-data', app_path
 
-    # TODO: service :restart, "nginx"
-    # TODO: service :restart, "php7.0-fpm"
-    `systemctl restart php7.0-fpm`
-    `systemctl restart nginx`
-    `status-set active Ready`
+    cmd.run "systemctl", "restart", "php7.0-fpm"
+    cmd.run "systemctl", "restart", "nginx"
+    cmd.run "status-set", "active", "Dokuwiki updated and is now ready."
   end
 end
+
+task :default => 'dokuwiki:install'
 ```
 
 The core of Charmkit contains a few helpers such as template rendering but
 otherwise kept relatively small.
 
 **Charmkit** does have a sense of "plugins" which are really **rake** tasks that
-reside in *charmkit/plugin/{name}* as seen in the example syntax above.
+reside in **charmkit/plugin/NAME** as seen in the example syntax above.
 
 ## Using local plugins
 
