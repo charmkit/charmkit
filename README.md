@@ -30,7 +30,7 @@ In **hooks/install**:
 apt-get update
 apt-get install -qyf ruby bundler --no-install-recommends
 
-bundle install --local --quiet
+bundle install --local --quiet --without development
 
 bundle exec rake dokuwiki:install
 ```
