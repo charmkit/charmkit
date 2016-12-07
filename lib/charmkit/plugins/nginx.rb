@@ -1,8 +1,8 @@
 namespace :nginx do
   desc "Install NGINX"
   task :install do
-    `apt-get update`
-    `juju-log "Installing NGINX and its dependencies."`
-    `apt-get install -qyf nginx-full`
+    cmd.run "apt-get", "update"
+    cmd.run "juju-log", "Installing NGINX and its dependencies."
+    cmd.run "apt-get", "install", "-qyf", "nginx-full"
   end
 end
