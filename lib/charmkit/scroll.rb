@@ -1,5 +1,7 @@
 require "charmkit/helpers/template"
 require "charmkit/helpers/runner"
+require "charmkit/helpers/fs"
+require "charmkit/helpers/hookenv"
 
 class Scroll
   def self.inherited base
@@ -33,10 +35,15 @@ class Scroll
   module InstanceMethods
     def to_hash
       {
+        "name" => self.class.name.downcase,
         "summary" => self.class.instance_variable_get(:@summary),
         "desc" => self.class.instance_variable_get(:@desc),
         "dependencies" => self.class.instance_variable_get(:@dependencies)
       }
+    end
+
+    def summon
+      raise NotImplementedError, "Summon must be overridden in (#{self.class.name}) class."
     end
   end
 end
