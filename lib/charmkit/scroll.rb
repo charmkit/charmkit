@@ -1,30 +1,42 @@
-require 'pstore'
+require "charmkit/helpers/template"
+require "charmkit/helpers/runner"
 
 class Scroll
-  # def initialize
-  #   @store = PStore.new('charmkit.store')
-  #   @cache = @store.transaction { @store.fetch(:data, {:states => []})}
-  # end
-  # def self.summon(run_state, success_state, &block)
-  #   puts "Setting run state: #{run_state}"
-  #   self.store.transaction do
-  #     @store[:data][:states] << run_state
-  #   end
-  #   block.call if block_given?
-  #   puts "Setting successful state: #{success_state}"
-  #   @store.transaction do
-  #     @store[:data][:states] << success_state
-  #   end
-  # end
-  class << self
-    attr_accessor :summary
-    attr_accessor :desc
-    attr_accessor :depends_on
+  def self.inherited base
+    base.send :include, InstanceMethods
+    base.extend ClassMethods
+    base.extend Charmkit::Helpers
+  end
+  module ClassMethods
+    attr_accessor :summary, :desc
+    attr_writer :dependencies
 
-    def incant(run_state, success_state, &block)
-      puts run_state
+    def incant(state, &block)
       block.call if block_given?
-      puts success_state
+    end
+
+    def summary(text)
+      @summary = text
+    end
+
+    def desc(text)
+      @desc = text
+    end
+
+    def depends_on(dep)
+      if @dependencies.nil?
+        @dependencies = []
+      end
+      @dependencies << dep
+    end
+  end
+  module InstanceMethods
+    def to_hash
+      {
+        "summary" => self.class.instance_variable_get(:@summary),
+        "desc" => self.class.instance_variable_get(:@desc),
+        "dependencies" => self.class.instance_variable_get(:@dependencies)
+      }
     end
   end
 end

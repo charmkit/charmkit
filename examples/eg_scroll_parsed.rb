@@ -1,4 +1,5 @@
 require 'charmkit'
+require 'pp'
 
 class Nginx < Scroll
   summary "NGINX incantation"
@@ -6,7 +7,11 @@ class Nginx < Scroll
 
   depends_on "nginx-full"
 
-  incant :nginx_install, :nginx_installed do
-    puts "installing nginx"
+  incant :nginx_install do
+    cmd.run 'ls -l'
+    puts "Running: #{@summary}"
   end
 end
+
+n = Nginx.new
+puts n.to_hash
