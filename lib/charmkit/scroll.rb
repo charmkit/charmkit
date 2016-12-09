@@ -2,19 +2,21 @@ require "charmkit/helpers/template"
 require "charmkit/helpers/runner"
 require "charmkit/helpers/fs"
 require "charmkit/helpers/hookenv"
+require "micromachine"
 
 class Scroll
+
   def self.inherited base
     base.send :include, InstanceMethods
     base.extend ClassMethods
     base.extend Charmkit::Helpers
+
   end
   module ClassMethods
-    attr_accessor :summary, :desc
-    attr_writer :dependencies
+    @@react = MicroMachine.new(:new)
 
-    def incant(state, &block)
-      block.call if block_given?
+    def react
+      @@react
     end
 
     def summary(text)

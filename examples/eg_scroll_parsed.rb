@@ -6,11 +6,13 @@ class Nginx < Scroll
 
   depends_on "nginx-full"
 
-  #  state "nginx.available"
-  def summon
-    puts "ive been summoned"
-  end
-end
+  puts "Current state: #{react.state}"
+  react.when :nginx_install, :new => :nginx_installed
 
-m = Nginx.new
-m.summon
+  react.on :nginx_install do
+    puts "nginx is installed"
+  end
+
+  react.trigger :nginx_install
+
+end
