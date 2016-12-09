@@ -2,7 +2,7 @@ require "charmkit/helpers/template"
 require "charmkit/helpers/runner"
 require "charmkit/helpers/fs"
 require "charmkit/helpers/hookenv"
-require "micromachine"
+require "charmkit/reactive"
 
 class Scroll
 
@@ -13,7 +13,7 @@ class Scroll
 
   end
   module ClassMethods
-    @@react = MicroMachine.new(:new)
+    @@react = Charmkit::Reactive.new
 
     def react
       @@react
@@ -27,11 +27,9 @@ class Scroll
       @desc = text
     end
 
-    def depends_on(dep)
-      if @dependencies.nil?
-        @dependencies = []
-      end
-      @dependencies << dep
+    def depends_on(*deps)
+      run "apt-get -qq update"
+      run "apt-get install -qyf deps"
     end
   end
   module InstanceMethods
