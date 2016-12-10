@@ -1,13 +1,11 @@
 require 'charmkit'
 require_relative 'nginx_scroll'
 
-class Dokuwiki < Scroll
-  depends_on "php"
-
+class Dokuwiki < Charmkit::Scroll
   react.trigger :nginx_install
-end
+  puts react.state
 
-d = Dokuwiki.new
-require 'pp'
-pp d.to_hash
-pp $0
+  react.on :nginx_available do
+    puts "Ok nginx is installed, now installing dokuwiki"
+  end
+end

@@ -11,7 +11,7 @@ module Charmkit
     def initialize
       @store = PStore.new('.ck.yml')
       @final_states = @store.transaction { @store.fetch(:final_states, [])}
-      @fm = MicroMachine.new(:new)
+      @fm = MicroMachine.new(:start)
     end
 
     def only_once(key, &block)
