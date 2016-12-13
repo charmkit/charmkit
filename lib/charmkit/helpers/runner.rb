@@ -1,6 +1,6 @@
 require 'tty-command'
 
-module Charmkit
+class Charmkit
   module Helpers
     def cmd
       return TTY::Command.new

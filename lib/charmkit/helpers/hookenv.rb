@@ -1,4 +1,4 @@
-module Charmkit
+class Charmkit
   module Helpers
     def status(level=:maintenance, msg="")
       levels = [:maintenance, :active, :blocked, :waiting]

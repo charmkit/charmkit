@@ -13,53 +13,38 @@ maintainers 'Adam Stokes <adam.stokes@ubuntu.com>'
 series 'xenial', 'trusty'
 tags 'php', 'wiki'
 
-resources do |resource|
-  resource.add name: 'stable-release',
-               type: 'file',
-               filename: 'stable.tgz',
-               description: "Dokuwiki stable wiki source"
-end
+resource.add name: 'stable-release', type: 'file', filename: 'stable.tgz', description: "Dokuwiki stable wiki source"
 
 set :app_path, "/srv/app", "Dokuwiki application path"
+set :hook_path, ENV['JUJU_CHARM_DIR'], "Charm hook path"
 set :admin_user, "", "Administrator"
 set :admin_password, "", "Administrator password"
 set :admin_name, "admin", "Administrator name"
 set :admin_email, "admin@example.com", "Administrator email"
 
-depends_on "nginx-full"
-depends_on "php-fpm"
-depends_on "php-cgi"
-depends_on "php-curl"
-depends_on "php-gd"
-depends_on "php-json"
-depends_on "php-mcrypt"
-depends_on "php-readline"
-depends_on "php-mbstring"
-depends_on "php-xml"
+depends_on "nginx"
+depends_on "php7"
 
 hook "install" do
-  app_path = config 'app_path'
   resource_path = resource 'stable-release'
-  hook_path = ENV['JUJU_CHARM_DIR']
 
-  mkdir_p app_path unless Dir.exists? app_path
+  mkdir_p get(:app_path) unless Dir.exists? get(:app_path)
 
   run "tar", "xf", resource_path, "-C", app_path, "--strip-components=1"
 
-  cp "#{hook_path}/templates/acl.auth.php", "#{app_path}/conf/acl.auth.php"
-  cp "#{hook_path}/templates/local.php", "#{app_path}/conf/local.php"
-  cp "#{hook_path}/templates/plugins.local.php", "#{app_path}/conf/plugin.local.php"
+  cp "#{get :hook_path}/templates/acl.auth.php", "#{get :app_path}/conf/acl.auth.php"
+  cp "#{get :hook_path}/templates/local.php", "#{get :app_path}/conf/local.php"
+  cp "#{get :hook_path}/templates/plugins.local.php", "#{get :app_path}/conf/plugin.local.php"
 
   version = File.read "#{app_path}/VERSION"
   run "application-version-set", version.chomp
   status, :active, "Dokuwiki installed, please set your admin user and password with juju config dokuwiki admin_user=<an_admin_name> admin_password=<sha512 password>"
 end
 
-hook "config-changed" do
-    app_path = config 'app_path'
-    hook_path = ENV['JUJU_CHARM_DIR']
+hook "config" do
+    app_path = get :app_path
 
-    admin_user = config 'admin_user'
+    admin_user = get 'admin_user'
     admin_password = config 'admin_password'
     admin_name = config 'admin_name'
     admin_email = config 'admin_email'

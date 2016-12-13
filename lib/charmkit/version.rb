@@ -1,4 +1,4 @@
-module Charmkit
+class Charmkit
   def self.version
     Gem::Version.new VERSION::STRING
   end
@@ -6,7 +6,7 @@ module Charmkit
   module VERSION
     MAJOR = 0
     MINOR = 4
-    PATCH = 8
+    PATCH = 9
     PRE = nil
 
     STRING = [MAJOR, MINOR, PATCH, PRE].compact.join('.')

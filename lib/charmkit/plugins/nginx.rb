@@ -1,8 +1,20 @@
-namespace :nginx do
-  desc "Install NGINX"
-  task :install do
-    cmd.run "apt-get", "update"
-    cmd.run "juju-log", "Installing NGINX and its dependencies."
-    cmd.run "apt-get", "install", "-qyf", "nginx-full"
+class Charmkit
+  module Plugins
+    module Nginx
+      module InstanceMethods
+        def initialize
+          if !is_installed? 'nginx-full'
+            status :maintenance, 'Installing NGINX'
+            package ['nginx-full']
+            status :active, "NGINX installed."
+          end
+          yield(self)
+        end
+        def install_vhost
+          puts "installing vhost"
+        end
+      end
+    end
+    register_plugin(:nginx, Nginx)
   end
 end

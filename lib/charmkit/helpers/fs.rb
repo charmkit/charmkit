@@ -1,4 +1,4 @@
-module Charmkit
+class Charmkit
   module Helpers
     # Create a file with data
     #
