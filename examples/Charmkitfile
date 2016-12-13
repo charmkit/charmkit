@@ -2,11 +2,29 @@
 #
 # Charmkitfile for setting up dokuwiki
 
-set "app_path", "/srv/app"
-set "admin_user", ""
-set "admin_password", ""
-set "admin_name", "admin"
-set "admin_email", "admin@example.com"
+name "dokuwiki"
+summary "Dokuwiki is a simple to use wiki."
+description <<-EOF
+DokuWiki is a simple to use and highly versatile Open Source wiki software
+that doesn't require a database. It is loved by users for its clean and
+readable syntax.
+EOF
+maintainers 'Adam Stokes <adam.stokes@ubuntu.com>'
+series 'xenial', 'trusty'
+tags 'php', 'wiki'
+
+resources do |resource|
+  resource.add name: 'stable-release',
+               type: 'file',
+               filename: 'stable.tgz',
+               description: "Dokuwiki stable wiki source"
+end
+
+set :app_path, "/srv/app", "Dokuwiki application path"
+set :admin_user, "", "Administrator"
+set :admin_password, "", "Administrator password"
+set :admin_name, "admin", "Administrator name"
+set :admin_email, "admin@example.com", "Administrator email"
 
 depends_on "nginx-full"
 depends_on "php-fpm"
