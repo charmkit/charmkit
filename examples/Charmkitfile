@@ -1,0 +1,127 @@
+# -*- mode:ruby -*-
+#
+# Charmkitfile for setting up dokuwiki
+
+set "app_path", "/srv/app"
+set "admin_user", ""
+set "admin_password", ""
+set "admin_name", "admin"
+set "admin_email", "admin@example.com"
+
+depends_on "nginx-full"
+depends_on "php-fpm"
+depends_on "php-cgi"
+depends_on "php-curl"
+depends_on "php-gd"
+depends_on "php-json"
+depends_on "php-mcrypt"
+depends_on "php-readline"
+depends_on "php-mbstring"
+depends_on "php-xml"
+
+hook "install" do
+  app_path = config 'app_path'
+  resource_path = resource 'stable-release'
+  hook_path = ENV['JUJU_CHARM_DIR']
+
+  mkdir_p app_path unless Dir.exists? app_path
+
+  run "tar", "xf", resource_path, "-C", app_path, "--strip-components=1"
+
+  cp "#{hook_path}/templates/acl.auth.php", "#{app_path}/conf/acl.auth.php"
+  cp "#{hook_path}/templates/local.php", "#{app_path}/conf/local.php"
+  cp "#{hook_path}/templates/plugins.local.php", "#{app_path}/conf/plugin.local.php"
+
+  version = File.read "#{app_path}/VERSION"
+  run "application-version-set", version.chomp
+  status, :active, "Dokuwiki installed, please set your admin user and password with juju config dokuwiki admin_user=<an_admin_name> admin_password=<sha512 password>"
+end
+
+hook "config-changed" do
+    app_path = config 'app_path'
+    hook_path = ENV['JUJU_CHARM_DIR']
+
+    admin_user = config 'admin_user'
+    admin_password = config 'admin_password'
+    admin_name = config 'admin_name'
+    admin_email = config 'admin_email'
+    inline_template "users.auth.php",
+             "#{app_path}/conf/users.auth.php",
+             admin_user: admin_user,
+             admin_password: admin_password,
+             admin_name: admin_name,
+             admin_email: admin_email
+
+    public_address = unit 'public-address'
+    inline_template "vhost.conf",
+                    "/etc/nginx/sites-enabled/default",
+                    public_address: public_address,
+                    app_path: app_path
+
+    chown_R 'www-data', 'www-data', app_path
+
+    run "systemctl", "restart", "php7.0-fpm"
+    run "systemctl", "restart", "nginx"
+    status :active, "Dokuwiki updated and is now ready."
+end
+
+__END__
+
+@@ users.auth.php
+
+# users.auth.php
+# <?php exit()?>
+# Don't modify the lines above
+#
+# Userfile
+#
+# Format:
+#
+# login:passwordhash:Real Name:email:groups,comma,seperated
+
+<%= admin_user %>:<%= admin_password %>:<%= admin_name %>:<%= admin_email %>:admin,user
+
+@@ vhost.conf
+
+# set cgi.fix_pathinfo = 0 in /etc/php/7.0/fpm/php.ini
+
+server {
+        ## Your website name goes here.
+        server_name <%= public_address %>;
+        ## Your only path reference.
+        root <%= app_path %>;
+        location / {
+		index doku.php;
+                # This is cool because no php is touched for static content.
+                # include the "?$args" part so non-default permalinks doesn't break when using query string
+                try_files $uri $uri/ @dokuwiki;
+        }
+
+	location ~ ^/lib.*\.(gif|png|ico|jpg)$ {
+                    expires 30d;
+	}
+
+	location ^~ /conf/ { return 403; }
+	location ^~ /data/ { return 403; }
+
+ 	location @dokuwiki {
+		rewrite ^/_media/(.*) /lib/exe/fetch.php?media=$1 last;
+		rewrite ^/_detail/(.*) /lib/exe/detail.php?media=$1 last;
+		rewrite ^/_export/([^/]+)/(.*) /doku.php?do=export_$1&id=$2 last;
+		rewrite ^/(.*) /doku.php?id=$1 last;
+	}
+
+        location ~ \.php$ {
+                include fastcgi_params;
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+        }
+	# Block access to data folders
+	location ~ /(data|conf|bin|inc)/ {
+		deny all;
+	}
+	# Block access to .htaccess files
+	location ~ /\.ht {
+		deny  all;
+	}
+}
