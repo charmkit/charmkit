@@ -1,4 +1,4 @@
-# Charmkit [![Gem Version](https://badge.fury.io/rb/charmkit.svg)](https://badge.fury.io/rb/charmkit)
+# Charmkit [![Gem Version](https://badge.fury.io/rb/charmkit.svg)](https://badge.fury.io/rb/charmkit) [![Build Status](https://travis-ci.org/charmkit/charmkit.svg?branch=master)](https://travis-ci.org/charmkit/charmkit)
 > elegantly elegant charm authoring
 
 ## Installation

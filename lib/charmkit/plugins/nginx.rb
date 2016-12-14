@@ -1,11 +1,11 @@
 require 'charmkit'
 
-class Charmkit
+module Charmkit
   module Plugins
-    module Nginx
+    class Nginx
       include Charmkit::Plugin
 
-      depends_on 'nginx-full', state: :nginx_available
+      depends_on 'nginx-full'
 
 
       private
