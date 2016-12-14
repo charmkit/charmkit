@@ -5,12 +5,12 @@ require 'charmkit/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "charmkit"
-  spec.version       = Charmkit.version
+  spec.version       = Charmkit::VERSION
   spec.authors       = ["Adam Stokes"]
   spec.email         = ["battlemidget@users.noreply.github.com"]
 
   spec.summary       = %q{Helps with charm authoring}
-  spec.description   = %q{}
+  spec.description   = %q{Elegantly elegant charm authoring}
   spec.homepage      = "http://charmkit.org"
   spec.license       = "MIT"
 

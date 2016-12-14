@@ -1,6 +1,6 @@
 require 'tty-command'
 
-class Charmkit
+module Charmkit
   module Helpers
     extend Forwardable
     def_delegators :cmd, :run, :run!, :test

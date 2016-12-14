@@ -1,5 +1,6 @@
 require 'fileutils'
-class Charmkit
+
+module Charmkit
   module Helpers
 
     FileUtils.singleton_methods.each do |m|

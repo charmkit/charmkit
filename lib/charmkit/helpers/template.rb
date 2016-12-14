@@ -1,6 +1,6 @@
 require 'erb'
 
-class Charmkit
+module Charmkit
   module Helpers
     # Helper for rendering file and inline templates
     class TemplateRenderer
