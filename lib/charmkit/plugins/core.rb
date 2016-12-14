@@ -5,7 +5,9 @@ class Charmkit
       #   ck.plugin :hookenv
       # end
       module ClassMethods
-        include Charmkit::Helpers
+        def hai
+          puts "hi"
+        end
       end
     end
     register_plugin(:core, Core)

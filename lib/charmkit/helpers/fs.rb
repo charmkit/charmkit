@@ -1,5 +1,11 @@
+require 'fileutils'
 class Charmkit
   module Helpers
+
+    FileUtils.singleton_methods.each do |m|
+      define_method m, FileUtils.method(m).to_proc
+    end
+
     # Create a file with data
     #
     # @param dst String
@@ -41,9 +47,9 @@ class Charmkit
     #   package ['nginx-full'], :update_cache
     def package(packages, *opts)
       if opts.include?(:update_cache)
-        cmd.run "apt-get update"
+        run "apt-get update"
       end
-      cmd.run "apt-get install -qyf #{packages.join(' ')}"
+      run "apt-get install -qyf #{packages.join(' ')}"
     end
 
     # Checks if a package is installed
@@ -55,7 +61,7 @@ class Charmkit
     #   is_install? "nginx-full"
     def is_installed?(package)
       begin
-        cmd.run "dpkg -s #{package}" and return true
+        run "dpkg -s #{package}" and return true
       rescue
         return false
       end

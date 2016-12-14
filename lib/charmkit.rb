@@ -1,4 +1,5 @@
 require "charmkit/version"
+require 'charmkit/helpers'
 
 class Charmkit
   # A generic exception by Charmkit
@@ -23,6 +24,10 @@ class Charmkit
 
     module Base
       module ClassMethods
+
+        # Add global helpers
+        include Charmkit::Helpers
+
         # Generic options for this class, plugins store their options here.
         attr_reader :opts
 
