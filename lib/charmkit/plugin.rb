@@ -1,28 +1,17 @@
 require 'charmkit/helpers'
 
 module Charmkit
-  module Plugin
-    # ClassMethods module exposes all necessary methods that a plugin author
-    # will need for creating plugins.
-    module ClassMethods
+  class Plugin
+    module Base
       include Helpers
 
-      # The name of the plugin
-      # @return [String, nil] Name of plugin
-      attr_reader :plugin_name
-
-      # Deb package dependencies
-      # @return [Array<Package>] A list of package depdencies for plugin
       attr_reader :dependencies
 
-
-      # @api private
       def self.extended(by)
         by.instance_exec do
           @dependencies = []
         end
       end
-
 
       # Deb package list that plugin requires
       #
@@ -50,11 +39,11 @@ module Charmkit
       def react_to(state)
         puts "reacting to #{state}"
       end
-
     end
 
-    def self.included(by)
-      by.extend ClassMethods
+    def self.inherited(by)
+      by.extend Base
     end
+    include Base
   end
 end
