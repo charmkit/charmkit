@@ -35,10 +35,8 @@ module Charmkit
         options = {
           :state => :installed
         }.merge(options)
-        options[:state] = "#{pkg}_#{options[:state]}".to_s.to_sym
         package = Package.new(pkg, *options.values_at(:state))
         @dependencies << package
-
         package
       end
 
