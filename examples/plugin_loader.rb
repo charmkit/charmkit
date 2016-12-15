@@ -1,7 +1,6 @@
 require 'charmkit'
 
-class PluginLoader
-  include Charmkit::Plugin
-  run 'ls -l /tmp'
+class PHP < Charmkit::Plugin
+  depends_on 'php'
 end
 

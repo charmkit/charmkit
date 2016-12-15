@@ -1,37 +1,28 @@
 require "spec_helper"
 
-class SP < Charmkit::Plugin
-  depends_on 'php'
-end
+# class SP < Charmkit::Plugin
+#   depends_on 'php'
+#   depends_on 'nginx-full'
 
-describe SP do
-  before(:all) do
-    @plugin = SP.new
-  end
+#   def install
+#     puts "im an install method"
+#   end
+# end
 
-  it "has a version number" do
-    expect(Charmkit::VERSION).not_to be nil
-  end
+# describe SP do
+#   before(:all) do
+#     @plugin = SP.new
+#   end
 
-  it "has a file method" do
-    expect(@plugin).to respond_to :file
-  end
+#   it "has a version number" do
+#     expect(Charmkit::VERSION).not_to be nil
+#   end
 
-  it "has a run! method" do
-    expect(@plugin).to respond_to :run!
-  end
+#   it "has install method" do
+#     expect(@plugin).to respond_to :install
+#   end
 
-  it "has a react_on method" do
-    expect(@plugin).to respond_to :react_to
-  end
-
-  it "has depends_on method" do
-    expect(@plugin).to respond_to :depends_on
-  end
-
-  # it "has nginx dependency listed" do
-  #   puts @plugin
-  #   expect(@plugin.dependencies.first.name).to eq 'nginx-full'
-  # end
-
-end
+#   it "has php as a dependency" do
+#     expect(SP.dependencies.first.name).to include 'php'
+#   end
+# end

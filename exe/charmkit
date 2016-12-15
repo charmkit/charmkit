@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require "charmkit/extend/string_tools"
+require "charmkit"
 
 if ARGV.length > 1
   puts "To many arguments, should be one of 'install, config-changed, start, stop, upgrade-charm'"
@@ -9,12 +9,9 @@ end
 
 hook_name = ARGV.pop
 
-if File.exists?("./lib/#{hook_name}.rb")
-  require "./lib/#{hook_name}"
+if File.exists?("Charmkitfile")
+  load "Charmkitfile"
 else
-  puts "Could not find hook in ./lib/#{hook_name}.rb"
+  puts "Could not find Charmkitfile"
   exit 1
 end
-
-puts "Loading #{hook_name}"
-Object.const_get(hook_name.classify).new

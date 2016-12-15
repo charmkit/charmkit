@@ -6,67 +6,84 @@ name "dokuwiki"
 summary "Dokuwiki is a simple to use wiki."
 description <<-EOF
 DokuWiki is a simple to use and highly versatile Open Source wiki software
-that doesn't require a database. It is loved by users for its clean and
-readable syntax.
+that doesn't require a database. It is loved by users for
+its clean and readable syntax.
 EOF
 maintainers 'Adam Stokes <adam.stokes@ubuntu.com>'
 series 'xenial', 'trusty'
 tags 'php', 'wiki'
 
-resource.add name: 'stable-release', type: 'file', filename: 'stable.tgz', description: "Dokuwiki stable wiki source"
+resource name: 'stable-release', type: 'file', filename: 'stable.tgz', description: "Dokuwiki stable wiki source"
+resource name: 'dev-release', type: 'file', filename: 'development.tgz', description: "Dokuwiki development wiki source"
 
-set :app_path, "/srv/app", "Dokuwiki application path"
-set :hook_path, ENV['JUJU_CHARM_DIR'], "Charm hook path"
-set :admin_user, "", "Administrator"
-set :admin_password, "", "Administrator password"
-set :admin_name, "admin", "Administrator name"
-set :admin_email, "admin@example.com", "Administrator email"
+save_metadata
 
-depends_on "nginx"
-depends_on "php7"
+option :app_path,
+       default: "/srv/app", description: "Dokuwiki application path"
+option :admin_user,
+       description: "Administrator"
+option :admin_password,
+       description: "Administrator password"
+option :admin_name,
+       default: "admin", description: "Administrator name"
+option :admin_email,
+       default: "admin@example.com", description: "Administrator email"
 
-hook "install" do
-  resource_path = resource 'stable-release'
+save_config
 
-  mkdir_p get(:app_path) unless Dir.exists? get(:app_path)
+depends_on "nginx-full"
+depends_on "php-fpm"
+depends_on "php-cgi"
+depends_on "php-curl"
+depends_on "php-gd"
+depends_on "php-json"
+depends_on "php-mcrypt"
+depends_on "php-readline"
+depends_on "php-mbstring"
+depends_on "php-xml"
 
-  run "tar", "xf", resource_path, "-C", app_path, "--strip-components=1"
+# hook "install" do
+#   resource_path = resource 'stable-release'
 
-  cp "#{get :hook_path}/templates/acl.auth.php", "#{get :app_path}/conf/acl.auth.php"
-  cp "#{get :hook_path}/templates/local.php", "#{get :app_path}/conf/local.php"
-  cp "#{get :hook_path}/templates/plugins.local.php", "#{get :app_path}/conf/plugin.local.php"
+#   mkdir_p get(:app_path) unless Dir.exists? get(:app_path)
 
-  version = File.read "#{app_path}/VERSION"
-  run "application-version-set", version.chomp
-  status, :active, "Dokuwiki installed, please set your admin user and password with juju config dokuwiki admin_user=<an_admin_name> admin_password=<sha512 password>"
-end
+#   run "tar", "xf", resource_path, "-C", app_path, "--strip-components=1"
 
-hook "config" do
-    app_path = get :app_path
+#   cp "#{hook_path}/templates/acl.auth.php", "#{get :app_path}/conf/acl.auth.php"
+#   cp "#{hook_path}/templates/local.php", "#{get :app_path}/conf/local.php"
+#   cp "#{hook_path}/templates/plugins.local.php", "#{get :app_path}/conf/plugin.local.php"
 
-    admin_user = get 'admin_user'
-    admin_password = config 'admin_password'
-    admin_name = config 'admin_name'
-    admin_email = config 'admin_email'
-    inline_template "users.auth.php",
-             "#{app_path}/conf/users.auth.php",
-             admin_user: admin_user,
-             admin_password: admin_password,
-             admin_name: admin_name,
-             admin_email: admin_email
+#   version = File.read "#{app_path}/VERSION"
+#   run "application-version-set", version.chomp
+#   status, :active, "Dokuwiki installed, please set your admin user and password with juju config dokuwiki admin_user=<an_admin_name> admin_password=<sha512 password>"
+# end
 
-    public_address = unit 'public-address'
-    inline_template "vhost.conf",
-                    "/etc/nginx/sites-enabled/default",
-                    public_address: public_address,
-                    app_path: app_path
+# hook "config-changed" do
+#     app_path = get :app_path
 
-    chown_R 'www-data', 'www-data', app_path
+#     admin_user = get 'admin_user'
+#     admin_password = config 'admin_password'
+#     admin_name = config 'admin_name'
+#     admin_email = config 'admin_email'
+#     inline_template "users.auth.php",
+#              "#{app_path}/conf/users.auth.php",
+#              admin_user: admin_user,
+#              admin_password: admin_password,
+#              admin_name: admin_name,
+#              admin_email: admin_email
 
-    run "systemctl", "restart", "php7.0-fpm"
-    run "systemctl", "restart", "nginx"
-    status :active, "Dokuwiki updated and is now ready."
-end
+#     public_address = unit 'public-address'
+#     inline_template "vhost.conf",
+#                     "/etc/nginx/sites-enabled/default",
+#                     public_address: public_address,
+#                     app_path: app_path
+
+#     chown_R 'www-data', 'www-data', app_path
+
+#     run "systemctl", "restart", "php7.0-fpm"
+#     run "systemctl", "restart", "nginx"
+#     status :active, "Dokuwiki updated and is now ready."
+# end
 
 __END__
 
