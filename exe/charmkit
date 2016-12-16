@@ -39,3 +39,4 @@ if known_hooks.include? ARGV.first
   exit 0
 end
 
+usage "Unable to run Charmkit."
