@@ -1,17 +1,34 @@
 #!/usr/bin/env ruby
 
+require 'commander'
 require "charmkit"
 
-if ARGV.length > 1
-  puts "To many arguments, should be one of 'install, config-changed, start, stop, upgrade-charm'"
-  exit 1
-end
+Object.module_eval(File.read('Charmkitfile'))
 
-hook_name = ARGV.pop
+Commander.configure do
+  program :version, Charmkit::VERSION
+  program :description, 'Charmkit the elegantly elegant charm tool'
 
-if File.exists?("Charmkitfile")
-  load "Charmkitfile"
-else
-  puts "Could not find Charmkitfile"
-  exit 1
+  command :build do |c|
+    c.syntax = 'charmkit build'
+    c.description = 'Builds a deployable charm'
+    c.action do |args, options|
+      # puts "Building charm"
+      # if File.exists?("Charmkitfile")
+      #   load "Charmkitfile"
+      # else
+      #   puts "Could not find Charmkitfile"
+      #   exit 1
+      # end
+      puts @hooks
+    end
+  end
+
+  command :do do |c|
+    c.syntax = 'charmkit do HOOK'
+    c.description = 'Runs a charm hook'
+    c.action do |args, options|
+      puts "moop"
+    end
+  end
 end

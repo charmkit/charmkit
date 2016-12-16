@@ -8,6 +8,7 @@ module Charmkit
   include Helpers
 
   attr_reader :dependencies, :resources, :options
+  attr_accessor :hooks
 
   def name(name)
     @name = name
@@ -61,6 +62,7 @@ module Charmkit
       @dependencies = []
       @resources = []
       @options = []
+      @hooks = {}
     end
   end
 
@@ -81,15 +83,11 @@ module Charmkit
   end
 
   def hook(name, &block)
-    case name
-    when "install"
-      puts "Doing apt-get install"
-    end
-    puts "Executing #{name}"
+    @hooks[name] = block
   end
 
   private
-  def save_metadata
+  def metadata_yaml
     meta = {
       'name' => @name,
       'summary' => @summary,
@@ -99,14 +97,14 @@ module Charmkit
       'tags' => @tags,
       'resources' => @resources
     }
-    file "metadata.yaml", meta.to_yaml
+    meta.to_yaml
   end
 
-  def save_config
+  def config_yaml
     opts = {
       'options' => @options
     }
-    file "config.yaml", opts.to_yaml
+    opts.to_yaml
   end
 
 
