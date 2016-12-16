@@ -13,7 +13,7 @@ module Charmkit
       run "status-set #{level.to_s} '#{msg}'"
     end
 
-    def config(item)
+    def config_get(item)
       out, err = run "config-get '#{item}'"
       return out.chomp
     end

@@ -42,7 +42,10 @@ module Charmkit
     end
   end
 
-  def option(k, v = {})
+  def config(k, v = {})
+    if v.empty?
+      return config_get k
+    end
     opts = {}
     opts[k] = {
       'default' => "",

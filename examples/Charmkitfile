@@ -16,15 +16,15 @@ tags 'php', 'wiki'
 resource name: 'stable-release', type: 'file', filename: 'stable.tgz', description: "Dokuwiki stable wiki source"
 resource name: 'dev-release', type: 'file', filename: 'development.tgz', description: "Dokuwiki development wiki source"
 
-option 'app_path',
+config 'app_path',
        default: "/srv/app", description: "Dokuwiki application path"
-option 'admin_user',
+config 'admin_user',
        description: "Administrator"
-option 'admin_password',
+config 'admin_password',
        description: "Administrator password"
-option 'admin_name',
+config 'admin_name',
        default: "admin", description: "Administrator name"
-option 'admin_email',
+config 'admin_email',
        default: "admin@example.com", description: "Administrator email"
 
 depends_on "nginx-full"
