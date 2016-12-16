@@ -2,6 +2,7 @@ require "yaml"
 require "charmkit/version"
 require 'charmkit/helpers'
 require 'charmkit/extend/struct_tools'
+require 'active_support/core_ext/hash/keys'
 
 module Charmkit
   include Helpers
@@ -33,19 +34,18 @@ module Charmkit
   end
 
   def resource(item)
-    @resources << item
+    @resources << item.stringify_keys!
   end
 
   def option(k, v = {})
-    opts = {
-      "#{k}": {
-        default: "",
-        type: "string",
-        description: ""
-      }
+    opts = {}
+    opts[k] = {
+      'default' => "",
+      'type' => "string",
+      'description' => ""
     }
     opts[k].merge!(v)
-    @options << opts
+    @options << opts.deep_stringify_keys!
   end
 
   def self.extended(by)
@@ -94,20 +94,21 @@ module Charmkit
   private
   def save_metadata
     meta = {
-      name: @name,
-      summary: @summary,
-      description: @description,
-      maintainers: @maintainers,
-      series: @series,
-      tags: @tags,
-      resources: @resources
+      'name' => @name,
+      'summary' => @summary,
+      'description' => @description,
+      'maintainers' => @maintainers,
+      'series' => @series,
+      'tags' => @tags,
+      'resources' => @resources
     }
+    file "metadata.yaml", meta.to_yaml
     puts "saving metadata.yaml: \n#{meta.to_yaml}"
   end
 
   def save_config
     opts = {
-      options: @options
+      'options' => @options
     }
     puts "saving config.yaml: \n#{opts.to_yaml}"
   end
