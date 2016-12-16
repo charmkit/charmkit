@@ -4,6 +4,27 @@ require "charmkit"
 load 'Charmkitfile'
 
 
+def usage(error = "Unable to run Charmkit")
+  puts "ERROR: #{error}\n\n"
+  puts <<-EOF
+Usage: charmkit [arg]
+
+Arguments:
+  build           Builds a deployable charm
+  install         Run install hook
+  config-changed  Run config-changed hook
+EOF
+  exit 1
+end
+
+if ARGV.length > 1
+  usage "To many arguments provided."
+end
+
+if ARGV.length == 0
+  usage "Missing argument"
+end
+
 if ARGV.first.include? 'build'
   puts "Building charm"
   puts config_yaml
@@ -18,13 +39,3 @@ if known_hooks.include? ARGV.first
   exit 0
 end
 
-puts "Unable to run Charmkit\n"
-puts <<-EOF
-Usage: charmkit [arg]
-
-Arguments:
-  build           Builds a deployable charm
-  install         Run install hook
-  config-changed  Run config-changed hook
-EOF
-exit 1
