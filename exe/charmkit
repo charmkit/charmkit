@@ -2,8 +2,9 @@
 
 require 'commander'
 require "charmkit"
+load 'Charmkitfile'
 
-Object.module_eval(File.read('Charmkitfile'))
+puts config_yaml
 
 Commander.configure do
   program :version, Charmkit::VERSION
@@ -20,7 +21,7 @@ Commander.configure do
       #   puts "Could not find Charmkitfile"
       #   exit 1
       # end
-      puts @hooks
+      puts @name
     end
   end
 
