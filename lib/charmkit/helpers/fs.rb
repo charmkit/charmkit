@@ -41,7 +41,7 @@ module Charmkit
     end
 
     def cat(src)
-      return File.read(src)
+      return File.read(src).chomp
     end
 
     # Installs packages

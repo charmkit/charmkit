@@ -50,8 +50,8 @@ hook "install" do
   cp "#{hook_path}/templates/local.php", "#{app_path}/conf/local.php"
   cp "#{hook_path}/templates/plugins.local.php", "#{app_path}/conf/plugin.local.php"
 
-  version = File.read "#{app_path}/VERSION"
-  run "application-version-set", version.chomp
+  version = cat "#{app_path}/VERSION"
+  run "application-version-set", version
   status :active, "Dokuwiki installed, please set your admin user and password with juju config dokuwiki admin_user=<an_admin_name> admin_password=<sha512 password>"
 end
 
