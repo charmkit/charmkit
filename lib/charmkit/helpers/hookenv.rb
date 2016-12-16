@@ -18,7 +18,7 @@ module Charmkit
       return out.chomp
     end
 
-    def resource(item)
+    def resource_get(item)
       out, err = run "resource-get '#{item}'"
       return out.chomp
     end

@@ -34,7 +34,12 @@ module Charmkit
   end
 
   def resource(item)
-    @resources << item.stringify_keys!
+    case item.class
+    when String
+      resource_get item
+    when Hash
+      @resources << item.stringify_keys!
+    end
   end
 
   def option(k, v = {})
