@@ -1,42 +1,14 @@
 #!/usr/bin/env ruby
 
-require "charmkit"
-load 'Charmkitfile'
+require 'thor'
+require 'charmkit'
 
 
-def usage(error = "Unable to run Charmkit")
-  puts "ERROR: #{error}\n\n"
-  puts <<-EOF
-Usage: charmkit [arg]
+class Application < Thor
 
-Arguments:
-  build           Builds a deployable charm
-  install         Run install hook
-  config-changed  Run config-changed hook
-EOF
-  exit 1
+  desc "build", "Build a charm"
+  def build
+  end
 end
 
-if ARGV.length > 1
-  usage "To many arguments provided."
-end
-
-if ARGV.length == 0
-  usage "Missing argument"
-end
-
-if ARGV.first.include? 'build'
-  puts "Building charm"
-  puts config_yaml
-  puts metadata_yaml
-  exit 0
-end
-
-known_hooks = ['install', 'config-changed', 'upgrade-charm', 'start', 'stop']
-if known_hooks.include? ARGV.first
-  puts "Running #{ARGV.first} hook"
-  puts @hooks[ARGV.first]
-  exit 0
-end
-
-usage "Unable to run Charmkit."
+Application.start

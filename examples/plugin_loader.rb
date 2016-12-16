@@ -1,6 +1,8 @@
-require 'charmkit'
+require 'scroll'
 
-class PHP < Charmkit::Plugin
-  depends_on 'php'
+class PHP < Scroll
+  install do
+    puts "HAI"
+  end
 end
 

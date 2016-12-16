@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require './plugin_loader'
+
+PHP.new
