@@ -1,35 +1,30 @@
 #!/usr/bin/env ruby
 
-require 'commander'
 require "charmkit"
 load 'Charmkitfile'
 
-puts config_yaml
 
-Commander.configure do
-  program :version, Charmkit::VERSION
-  program :description, 'Charmkit the elegantly elegant charm tool'
-
-  command :build do |c|
-    c.syntax = 'charmkit build'
-    c.description = 'Builds a deployable charm'
-    c.action do |args, options|
-      # puts "Building charm"
-      # if File.exists?("Charmkitfile")
-      #   load "Charmkitfile"
-      # else
-      #   puts "Could not find Charmkitfile"
-      #   exit 1
-      # end
-      puts @name
-    end
-  end
-
-  command :do do |c|
-    c.syntax = 'charmkit do HOOK'
-    c.description = 'Runs a charm hook'
-    c.action do |args, options|
-      puts "moop"
-    end
-  end
+if ARGV.first.include? 'build'
+  puts "Building charm"
+  puts config_yaml
+  puts metadata_yaml
+  exit 0
 end
+
+known_hooks = ['install', 'config-changed', 'upgrade-charm', 'start', 'stop']
+if known_hooks.include? ARGV.first
+  puts "Running #{ARGV.first} hook"
+  puts @hooks[ARGV.first]
+  exit 0
+end
+
+puts "Unable to run Charmkit\n"
+puts <<-EOF
+Usage: charmkit [arg]
+
+Arguments:
+  build           Builds a deployable charm
+  install         Run install hook
+  config-changed  Run config-changed hook
+EOF
+exit 1

@@ -35,7 +35,7 @@ module Charmkit
   end
 
   def resource(item)
-    case item.class
+    case item
     when String
       resource_get item
     when Hash
