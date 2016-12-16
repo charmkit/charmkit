@@ -1,10 +1,16 @@
 require 'fileutils'
+require 'pathname'
 
 module Charmkit
   module Helpers
 
     FileUtils.singleton_methods.each do |m|
       define_method m, FileUtils.method(m).to_proc
+    end
+
+    # Sugar over pathname
+    def path(pn)
+      Pathname.new(pn)
     end
 
     # Create a file with data

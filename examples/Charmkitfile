@@ -16,20 +16,16 @@ tags 'php', 'wiki'
 resource name: 'stable-release', type: 'file', filename: 'stable.tgz', description: "Dokuwiki stable wiki source"
 resource name: 'dev-release', type: 'file', filename: 'development.tgz', description: "Dokuwiki development wiki source"
 
-save_metadata
-
-option :app_path,
+option 'app_path',
        default: "/srv/app", description: "Dokuwiki application path"
-option :admin_user,
+option 'admin_user',
        description: "Administrator"
-option :admin_password,
+option 'admin_password',
        description: "Administrator password"
-option :admin_name,
+option 'admin_name',
        default: "admin", description: "Administrator name"
-option :admin_email,
+option 'admin_email',
        default: "admin@example.com", description: "Administrator email"
-
-save_config
 
 depends_on "nginx-full"
 depends_on "php-fpm"
@@ -42,48 +38,49 @@ depends_on "php-readline"
 depends_on "php-mbstring"
 depends_on "php-xml"
 
-# hook "install" do
-#   resource_path = resource 'stable-release'
+hook "install" do
+  app_path = path(config('app_path'))
+  resource_path = path(resource('stable-release'))
 
-#   mkdir_p get(:app_path) unless Dir.exists? get(:app_path)
+  mkdir_p app_path unless app_path.directory?
 
-#   run "tar", "xf", resource_path, "-C", app_path, "--strip-components=1"
+  run "tar", "xf", resource_path, "-C", app_path, "--strip-components=1"
 
-#   cp "#{hook_path}/templates/acl.auth.php", "#{get :app_path}/conf/acl.auth.php"
-#   cp "#{hook_path}/templates/local.php", "#{get :app_path}/conf/local.php"
-#   cp "#{hook_path}/templates/plugins.local.php", "#{get :app_path}/conf/plugin.local.php"
+  cp "#{hook_path}/templates/acl.auth.php", "#{app_path}/conf/acl.auth.php"
+  cp "#{hook_path}/templates/local.php", "#{app_path}/conf/local.php"
+  cp "#{hook_path}/templates/plugins.local.php", "#{app_path}/conf/plugin.local.php"
 
-#   version = File.read "#{app_path}/VERSION"
-#   run "application-version-set", version.chomp
-#   status, :active, "Dokuwiki installed, please set your admin user and password with juju config dokuwiki admin_user=<an_admin_name> admin_password=<sha512 password>"
-# end
+  version = File.read "#{app_path}/VERSION"
+  run "application-version-set", version.chomp
+  status :active, "Dokuwiki installed, please set your admin user and password with juju config dokuwiki admin_user=<an_admin_name> admin_password=<sha512 password>"
+end
 
-# hook "config-changed" do
-#     app_path = get :app_path
+hook "config-changed" do
+    app_path = path(config(app_path))
 
-#     admin_user = get 'admin_user'
-#     admin_password = config 'admin_password'
-#     admin_name = config 'admin_name'
-#     admin_email = config 'admin_email'
-#     inline_template "users.auth.php",
-#              "#{app_path}/conf/users.auth.php",
-#              admin_user: admin_user,
-#              admin_password: admin_password,
-#              admin_name: admin_name,
-#              admin_email: admin_email
+    admin_user = config 'admin_user'
+    admin_password = config 'admin_password'
+    admin_name = config 'admin_name'
+    admin_email = config 'admin_email'
+    inline_template "users.auth.php",
+             "#{app_path}/conf/users.auth.php",
+             admin_user: admin_user,
+             admin_password: admin_password,
+             admin_name: admin_name,
+             admin_email: admin_email
 
-#     public_address = unit 'public-address'
-#     inline_template "vhost.conf",
-#                     "/etc/nginx/sites-enabled/default",
-#                     public_address: public_address,
-#                     app_path: app_path
+    public_address = unit 'public-address'
+    inline_template "vhost.conf",
+                    "/etc/nginx/sites-enabled/default",
+                    public_address: public_address,
+                    app_path: app_path
 
-#     chown_R 'www-data', 'www-data', app_path
+    chown_R 'www-data', 'www-data', app_path
 
-#     run "systemctl", "restart", "php7.0-fpm"
-#     run "systemctl", "restart", "nginx"
-#     status :active, "Dokuwiki updated and is now ready."
-# end
+    run "systemctl", "restart", "php7.0-fpm"
+    run "systemctl", "restart", "nginx"
+    status :active, "Dokuwiki updated and is now ready."
+end
 
 __END__
 

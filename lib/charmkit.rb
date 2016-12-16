@@ -56,14 +56,6 @@ module Charmkit
     end
   end
 
-  # Hook path within a charm execution
-  #
-  # @return [String]
-  def hook_path
-    ENV['JUJU_CHARM_DIR']
-  end
-
-
   # Deb package list that plugin requires
   #
   # @attr [String] name The name of deb package
@@ -73,22 +65,19 @@ module Charmkit
 
   def depends_on(pkg, options = {})
     options = {
-      :state => :installed
+      :state => :installing
     }.merge(options)
     package = Package.new(pkg, *options.values_at(:state))
     @dependencies << package
     package
   end
 
-  # Defines states that the plugin will react to
-  # @param [Symbol] state A state that the plugin to should react to
-  #
-  # @return [Array<States>]
-  # @example
-  #   react_to :nginx_available, :install_app
-
-  def react_to(state)
-    puts "reacting to #{state}"
+  def hook(name, &block)
+    case name
+    when "install"
+      puts "Doing apt-get install"
+    end
+    puts "Executing #{name}"
   end
 
   private
@@ -103,14 +92,13 @@ module Charmkit
       'resources' => @resources
     }
     file "metadata.yaml", meta.to_yaml
-    puts "saving metadata.yaml: \n#{meta.to_yaml}"
   end
 
   def save_config
     opts = {
       'options' => @options
     }
-    puts "saving config.yaml: \n#{opts.to_yaml}"
+    file "config.yaml", opts.to_yaml
   end
 
 
