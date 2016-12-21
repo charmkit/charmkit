@@ -15,6 +15,7 @@ class Charmkit
     def self.load_scroll(name)
       unless scroll = @scrolls[name]
         require "charmkit/scrolls/#{name}"
+        puts "Loaded scroll: #{name}"
         raise Error, "scroll #{name} did not register itself correctly in Charmkit::Scrolls" unless scroll = @scrolls[name]
       end
       scroll
