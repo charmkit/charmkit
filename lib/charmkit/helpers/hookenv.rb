@@ -1,5 +1,12 @@
 module Charmkit
   module Helpers
+    # Hook path within a charm execution
+    #
+    # @return [String]
+    def hook_path
+      ENV['JUJU_CHARM_DIR']
+    end
+
     def status(level=:maintenance, msg="")
       levels = [:maintenance, :active, :blocked, :waiting]
       raise unless levels.include?(level)

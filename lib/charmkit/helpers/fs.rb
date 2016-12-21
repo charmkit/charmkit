@@ -1,5 +1,12 @@
+require 'pathname'
+
 module Charmkit
   module Helpers
+    # sugar over pathname
+    def path(pn)
+      Pathname.new(pn)
+    end
+
     # Create a file with data
     #
     # @param dst String

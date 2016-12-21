@@ -7,32 +7,33 @@ require 'charmkit/plugins/php'
 # The below require_relative will load a local task from tasks/vim.rb
 require_relative "tasks/vim.rb"
 
+
+
+app_path = path(config('app_path'))
+
 namespace :dokuwiki do
 
   desc "Install Dokuwiki"
   # Notice that I set task dependencies on nginx, php, AND vim
   # so that they get installed prior to installing dokuwiki
   task :install => ["nginx:install", "php:install", "vim:install"] do
-    app_path = `config-get app_path`.chomp
     resource_path = `resource-get stable-release`.chomp
-    hook_path = ENV['JUJU_CHARM_DIR']
 
-    mkdir_p app_path unless Dir.exists? app_path
+    mkdir_p app_path unless app_path.directory?
 
-    `tar xf #{resource_path} -C #{app_path} --strip-components=1`
+    run "tar", "xf", resource_path, "-C", app_path, "--strip-components=1"
+
     cp "#{hook_path}/templates/acl.auth.php", "#{app_path}/conf/acl.auth.php"
     cp "#{hook_path}/templates/local.php", "#{app_path}/conf/local.php"
     cp "#{hook_path}/templates/plugins.local.php", "#{app_path}/conf/plugin.local.php"
 
     version = File.read "#{app_path}/VERSION"
-    `application-version-set '#{version}'`
-    `status-set active "Dokuwiki Install finished."`
+    run "application-version-set", version.chomp
+    run "status-set", "active", "Dokuwiki Install finished."
   end
 
   desc "Configure Dokuwiki"
   task :config_changed do
-    app_path = `config-get app_path`.chomp
-    hook_path = ENV['JUJU_CHARM_DIR']
 
     admin_user = `config-get admin_user`.chomp
     admin_password = `config-get admin_password`.chomp
