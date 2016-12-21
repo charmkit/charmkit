@@ -1,14 +1,14 @@
 class Charmkit
-  module Plugins
+  module Scrolls
     module Core
 
       # def self.load_dependencies(ck, *)
-      #   ck.plugin :hookenv
+      #   ck.scroll :hookenv
       # end
       module ClassMethods
         puts "core"
       end
     end
-    register_plugin(:core, Core)
+    register_scroll(:core, Core)
   end
 end

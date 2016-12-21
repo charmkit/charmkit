@@ -8,24 +8,20 @@ class Charmkit
 
   @opts = {}
 
-  module Plugins
+  module Scrolls
 
-    @plugins = {}
+    @scrolls = {}
 
-    def self.load_plugin(name)
-      unless plugin = @plugins[name]
-        if File.exists? "kits/#{name}.rb"
-          require "./kits/#{name}"
-        else
-          require "charmkit/plugins/#{name}"
-        end
-        raise Error, "plugin #{name} did not register itself correctly in Charmkit::Plugins" unless plugin = @plugins[name]
+    def self.load_scroll(name)
+      unless scroll = @scrolls[name]
+        require "charmkit/scrolls/#{name}"
+        raise Error, "scroll #{name} did not register itself correctly in Charmkit::Scrolls" unless scroll = @scrolls[name]
       end
-      plugin
+      scroll
     end
 
-    def self.register_plugin(name, mod)
-      @plugins[name] = mod
+    def self.register_scroll(name, mod)
+      @scrolls[name] = mod
     end
 
     module Base
@@ -49,27 +45,27 @@ class Charmkit
 
 
         end
-        def plugin(plugin, *args, &block)
-          plugin = Plugins.load_plugin(plugin) if plugin.is_a?(Symbol)
-          plugin.load_dependencies(self, *args, &block) if plugin.respond_to?(:load_dependencies)
-          self.include(plugin::InstanceMethods) if defined?(plugin::InstanceMethods)
-          self.extend(plugin::ClassMethods) if defined?(plugin::ClassMethods)
-          plugin.configure(self, *args, &block) if plugin.respond_to?(:configure)
+        def scroll(scroll, *args, &block)
+          scroll = Scrolls.load_scroll(scroll) if scroll.is_a?(Symbol)
+          scroll.load_dependencies(self, *args, &block) if scroll.respond_to?(:load_dependencies)
+          self.include(scroll::InstanceMethods) if defined?(scroll::InstanceMethods)
+          self.extend(scroll::ClassMethods) if defined?(scroll::ClassMethods)
+          scroll.configure(self, *args, &block) if scroll.respond_to?(:configure)
           nil
         end
 
       end
       module InstanceMethods
+        include Charmkit::Helpers
         # The class-level options hash. This should probably not be modified at
         # the instance level.
         def opts
           self.class.opts
         end
-
       end
     end
   end
 
-  extend Plugins::Base::ClassMethods
-  plugin Plugins::Base
+  extend Scrolls::Base::ClassMethods
+  scroll Scrolls::Base
 end

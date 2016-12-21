@@ -1,6 +1,6 @@
 class Charmkit
-  module Plugins
-    module VimPlugin
+  module Scrolls
+    module VimScroll
       module ClassMethods
         def vim(switch, &block)
           if switch == :install
@@ -10,6 +10,6 @@ class Charmkit
         end
       end
     end
-    register_plugin(:vim, VimPlugin)
+    register_scroll(:vim, VimScroll)
   end
 end
