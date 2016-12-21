@@ -1,17 +1,24 @@
 require "charmkit/version"
+require "charmkit/helpers"
 
 class Charmkit
+
   # A generic exception by Charmkit
   class Error < StandardError; end
 
   @opts = {}
 
   module Plugins
+
     @plugins = {}
 
     def self.load_plugin(name)
       unless plugin = @plugins[name]
-        require "charmkit/plugins/#{name}"
+        if File.exists? "kits/#{name}.rb"
+          require "./kits/#{name}"
+        else
+          require "charmkit/plugins/#{name}"
+        end
         raise Error, "plugin #{name} did not register itself correctly in Charmkit::Plugins" unless plugin = @plugins[name]
       end
       plugin
@@ -22,8 +29,10 @@ class Charmkit
     end
 
     module Base
+
       module ClassMethods
         include Charmkit::Helpers
+
         # Generic options for this class, plugins store their options here.
         attr_reader :opts
 
