@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require "charmkit/extend/string_tools"
+require "active_support/core_ext/string/inflections"
 
 if ARGV.length > 1
   puts "To many arguments, should be one of 'install, config-changed, start, stop, upgrade-charm'"

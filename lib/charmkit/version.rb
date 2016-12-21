@@ -5,8 +5,8 @@ class Charmkit
 
   module VERSION
     MAJOR = 0
-    MINOR = 3
-    PATCH = 7
+    MINOR = 5
+    PATCH = 2
     PRE = nil
 
     STRING = [MAJOR, MINOR, PATCH, PRE].compact.join('.')

@@ -23,6 +23,7 @@ class Charmkit
 
     module Base
       module ClassMethods
+        include Charmkit::Helpers
         # Generic options for this class, plugins store their options here.
         attr_reader :opts
 
