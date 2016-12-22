@@ -1,26 +1,18 @@
 require "active_support/core_ext/string/inflections"
-require 'charmkit/helpers'
+require 'helpers'
+require 'dependencies'
 
 class Scroll
+
   class << self
-    include Charmkit::Helpers
+    include Helpers
 
-    def initialize
-      @dependencies = []
-    end
-
-    def use(name, options = {})
-      require "./scrolls/#{name.to_s}"
-      name = name.to_s.classify
-      const_set(name, name.constantize.new)
-    end
-
+    # Apt packages that the scroll requires
+    #
+    # @param [String] pkg Name of apt package
     def depends_on(pkg)
-      @dependencies << pkg
+      Dependencies << pkg
     end
 
-    def list_deps
-      @dependencies
-    end
   end
 end

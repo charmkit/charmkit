@@ -16,5 +16,14 @@ else
   exit 1
 end
 
-puts "Loading #{hook_name}"
-Object.const_get(hook_name.classify).new
+# Perform the Hook's tasks
+hook = Object.const_get(hook_name.classify).new
+
+# Install hook is a special case as it should only be run once.
+# So we handle our apt package installation here prior to any
+# other method execution.
+if hook.is_a? Install
+  hook.install
+end
+
+hook.summon

@@ -1,12 +1,12 @@
-require 'scroll'
+require 'charmkit'
 
-class Install < Scroll
+class Install < Charmkit
   use :nginx
   use :php
 
-  Php.add_host server_name: "php.example.com"
-  Nginx.add_host server_name: "www.example.come"
+  def summon
+    Php.add_host server_name: "php.example.com"
+    Nginx.add_host server_name: "www.example.come"
+  end
 
-
-  puts list_deps
 end
