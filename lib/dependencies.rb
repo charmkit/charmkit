@@ -8,6 +8,8 @@ class Dependencies
   end
 
   def self.install
+    # TODO: Should be a dependency class with options for
+    # installing groups, recommended packages, and snaps
     puts "Installing #{@@deps.join(' ')}"
   end
 

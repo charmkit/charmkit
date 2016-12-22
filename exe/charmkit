@@ -17,13 +17,13 @@ else
 end
 
 # Perform the Hook's tasks
-hook = Object.const_get(hook_name.classify).new
+hook = Object.const_get(hook_name.underscore.camelize.classify).new
 
 # Install hook is a special case as it should only be run once.
 # So we handle our apt package installation here prior to any
 # other method execution.
-if hook.is_a? Install
-  hook.install
+if defined? Install and hook.is_a? Install
+  hook.deps.install unless hook.deps.empty?
 end
 
 hook.summon

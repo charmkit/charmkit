@@ -4,27 +4,29 @@ require 'dependencies'
 class Charmkit
 
   # Handles installation of any apt packages in the Dependencies class
-  def install
-    Dependencies.install
+  def deps
+    Dependencies
   end
 
   # Summon main hook tasks
   def summon
-    raise "Called from #{self.class.name} but did not override the summon method"
+    raise <<-EOF
+Tried to call summon for #{self.class.name} but the summon method does not
+exist in the Hook.
+EOF
   end
 
   class << self
     include Helpers
 
+    # Include scrolls to be used within hook execution
+    #
+    # @param [Symbol] name symbol of scroll
+    # @param [Hash] options (NotImplemented) Options to be passed to scroll
     def use(name, options = {})
       require "./scrolls/#{name.to_s}"
       name = name.to_s.classify
       const_set(name, name.constantize.new)
     end
-
-    def deps
-      Dependencies
-    end
-
   end
 end
