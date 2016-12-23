@@ -69,49 +69,55 @@ See the syntax below for a the **config-changed** hook being run:
 ```ruby
 require 'charmkit'
 
-class ConfigChanged < Charmkit
-  plugin :core
+class ConfigChanged < Charmkit::Hook
+  use :nginx
 
   def summon
     package [
-        'nginx-full', 'php-fpm',      'php-cgi',      'php-curl', 'php-gd', 'php-json',
+        'php-fpm',      'php-cgi',      'php-curl', 'php-gd', 'php-json',
         'php-mcrypt', 'php-readline', 'php-mbstring', 'php-xml'
     ], :update_cache
 
     hook_path = ENV['JUJU_CHARM_DIR']
-    app_path = config 'app_path'
+    app_path = path(config('app_path'))
 
-    mkdir app_path unless is_dir? app_path
+    mkdir app_path unless app_path.directory?
 
-    resource_path = resource 'stable-release'
+    resource_path = path(resource('stable-release'))
     run "tar xf #{resource_path} -C #{app_path} --strip-components=1"
 
-    rm "#{app_path}/conf/install.php" unless !is_file? "#{app_path}/conf/install.php"
+    rm "#{app_path}/conf/install.php" unless app_path.join("/conf/install.php").file?
     status :active, "Dokuwiki configuration updated."
   end
 end
 ```
 
 The core of Charmkit is relatively small and everything is handled through
-plugins. Current plugins are:
+scrolls (read
+plugins). [Visit Charmkit Scrolls](https://github.com/charmkit/charmkit-scrolls)
+for more information.
 
-* core - Gives you access to things like *package*, *mkdir_p*, *chown_R*, etc.
-* hookenv - Provides access to Juju hook items such as *resource*, *unit*, *juju-log*, etc.
 
 ## Packaging the Charm
 
-You'll want to make sure that any Ruby gems used are packaged with your charm so
-that you aren't forcing users to try to download those dependencies during
-deployment.
-
-Easiest way to package your deps is:
-
 ```
-$ bundle package
+$ bundle exec charmkit build
 ```
 
-This will place your deps inside `vendor/cache` which will be uploaded when
-executing a `charm push .`
+This will package and cache all required gems, along with making sure the necessary
+scrolls are included. The output will be a charm that you can deploy via:
+
+```
+$ juju deploy dist/.
+```
+
+## Uploading to charm store
+
+Once the charm is built simply run:
+
+```
+$ charm push dist/.
+```
 
 ## Development
 
