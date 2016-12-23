@@ -81,12 +81,12 @@ class ConfigChanged < Charmkit::Hook
     hook_path = ENV['JUJU_CHARM_DIR']
     app_path = path(config('app_path'))
 
-    mkdir app_path unless app_path.directory?
+    mkdir app_path
 
     resource_path = path(resource('stable-release'))
     run "tar xf #{resource_path} -C #{app_path} --strip-components=1"
 
-    rm "#{app_path}/conf/install.php" unless app_path.join("/conf/install.php").file?
+    rm app_path/"conf/install.php"
     status :active, "Dokuwiki configuration updated."
   end
 end
