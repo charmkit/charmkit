@@ -1,6 +1,6 @@
-require 'scroll'
+require 'charmkit'
 
-class Php < Scroll
+class Php < Charmkit::Scroll
   depends_on "php-cgi"
 
   def add_host(options = {})

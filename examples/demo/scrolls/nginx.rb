@@ -1,6 +1,6 @@
-require 'scroll'
+require 'charmkit'
 
-class Nginx < Scroll
+class Nginx < Charmkit::Scroll
   depends_on "nginx-full"
 
   def add_host(options = {})

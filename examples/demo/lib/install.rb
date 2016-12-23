@@ -1,6 +1,6 @@
 require 'charmkit'
 
-class Install < Charmkit
+class Install < Charmkit::Hook
   use :nginx
   use :php
 

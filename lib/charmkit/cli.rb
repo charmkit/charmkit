@@ -1,0 +1,140 @@
+require "active_support/core_ext/string/inflections"
+require 'thor'
+require 'charmkit/helpers'
+require 'pathname'
+
+module Charmkit
+  class CLI < Thor
+    desc "hook NAME", "execute a given hook"
+    def hook(name)
+      if File.exists?("./lib/#{name}.rb")
+        require "./lib/#{name}"
+      else
+        puts "Could not find hook in ./lib/#{name}.rb"
+        exit 1
+      end
+
+      # Perform the Hook's tasks
+      hook = Object.const_get(name.underscore.camelize.classify).new
+
+      # Install hook is a special case as it should only be run once.
+      # So we handle our apt package installation here prior to any
+      # other method execution.
+      if defined? Install and hook.is_a? Install
+        hook.deps.install unless hook.deps.empty?
+      end
+
+      hook.summon
+    end
+
+    desc "build NAME", "builds a charm skelton"
+    def build(name)
+      pn = Pathname(name)
+      if pn.directory?
+        puts "#{name} directory exists, please choose a different charm name."
+        exit 1
+      else
+        pn.mkpath
+        pn.join('hooks').mkpath
+        pn.join('scrolls').mkpath
+        pn.join('lib').mkpath
+      end
+      Helpers.inline_template 'config.yaml', pn/'config.yaml'
+      Helpers.inline_template 'metadata.yaml', pn/'metadata.yaml', name: name
+      Helpers.inline_template 'README.md', pn/'README.md', name: name
+
+      # Write the install hook
+      hook_path = pn.join('hooks/install')
+      Helpers.inline_template 'install-hook', hook_path
+      hook_path.chmod 0755
+
+      # Write other hooks
+      hooks = ['config-changed',
+               'upgrade-charm',
+               'start',
+               'stop',
+               'leader-elected',
+               'leader-settings-changed',
+               'update-status']
+      hooks.each do |hook|
+        hook_path = pn.join("hooks/#{hook}")
+        Helpers.inline_template 'generic-hook', hook_path, hook: hook
+        hook_path.chmod 0755
+      end
+
+      Helpers.inline_template 'install.rb', pn/'lib/install.rb'
+    end
+  end
+end
+
+
+__END__
+
+@@ install.rb
+require 'charmkit'
+
+# This is your install hook
+class Install < Charmkit::Hook
+  use :nginx  # If you want to make use of scrolls you'll define them here
+
+  # This method must be defined for the hook to execute
+  # You have access to the scrolls based on the constant name
+  # ie. the symbol :nginx would translate to the constant Nginx, see below
+  # for an example
+  def summon
+    Nginx.add_host server_name: "www.example.com"
+  end
+end
+
+@@ install-hook
+#!/bin/sh
+apt-get update && apt-get install -qyf ruby bundler --no-install-recommends
+bundle install --local --quiet --without development
+# Do install task
+bundle exec charmkit install
+
+@@ generic-hook
+#!/bin/sh
+bundle exec charmkit <%= hook %>
+
+@@ config.yaml
+options: {}
+
+@@ metadata.yaml
+name: <%= name %>
+summary: |
+  <<insert summary>>
+description: |
+  <<insert description>>
+maintainers: ['']
+series:
+  - xenial
+
+@@ README.md
+# Overview
+
+My charm Overview
+
+# Usage
+
+    $ juju deploy <%= name %>
+
+# Developers
+
+How developers can contribute
+
+# Maintainers
+
+How QA and others can test your charm
+
+# Author
+
+Your name <mememe@email.com>
+
+# Copyright
+
+2016 Your name
+
+# License
+
+MIT

@@ -1,6 +1,6 @@
 require 'charmkit'
 
-class ConfigChanged < Charmkit
+class ConfigChanged < Charmkit::Hook
   use :nginx
 
   def summon
