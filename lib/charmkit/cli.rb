@@ -27,8 +27,20 @@ module Charmkit
       hook.summon
     end
 
-    desc "build NAME", "builds a charm skelton"
-    def build(name)
+    desc "update", "Update scrolls registry"
+    def update
+      cache_path = Pathname(ENV['HOME'])/'.cache/'
+      registry_path = cache_path.join('charmkit-scrolls')
+      if registry_path.directory? and registry_path.join('.git').directory?
+        system "cd #{registry_path} && git pull -q"
+      else
+        cache_path.mkpath
+        system "cd #{cache_path} && git clone -q --depth=1 https://github.com/charmkit/charmkit-scrolls.git"
+      end
+    end
+
+    desc "generate NAME", "generate a charm skelton"
+    def generate(name)
       pn = Pathname(name)
       if pn.directory?
         puts "#{name} directory exists, please choose a different charm name."
@@ -64,6 +76,7 @@ module Charmkit
 
       Helpers.inline_template 'install.rb', pn/'lib/install.rb'
     end
+    map "g" => "generate"
   end
 end
 

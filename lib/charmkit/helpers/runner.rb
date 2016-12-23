@@ -12,5 +12,6 @@ module Charmkit
         TTY::Command.new
       end
     end
+
   end
 end
