@@ -52,12 +52,12 @@ module Charmkit
       else
         pn.mkpath
         pn.join('hooks').mkpath
-        pn.join('scrolls').mkpath
         pn.join('lib').mkpath
       end
       Helpers.inline_template 'config.yaml', pn/'config.yaml'
       Helpers.inline_template 'metadata.yaml', pn/'metadata.yaml', name: name
       Helpers.inline_template 'README.md', pn/'README.md', name: name
+      Helpers.inline_template 'Gemfile', pn/'Gemfile'
 
       # Write the install hook
       hook_path = pn.join('hooks/install')
@@ -86,6 +86,15 @@ end
 
 
 __END__
+
+@@ Gemfile
+# frozen_string_literal: true
+source "https://rubygems.org"
+
+gem "charmkit"
+
+# If you wish to load additional scrolls add those here
+# gem "charmkit-scroll-nginx", :github => "battlemidget/charmkit-scroll-nginx"
 
 @@ install.rb
 require 'charmkit'

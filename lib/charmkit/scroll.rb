@@ -1,5 +1,6 @@
 module Charmkit
   class Scroll
+    include Helpers
     class << self
       include Helpers
 
