@@ -19,6 +19,9 @@ exist in the Hook.
 EOF
     end
 
+    # Tests basic hooks like checking if a package got installed
+    def test; end
+
     class << self
       include Helpers
 

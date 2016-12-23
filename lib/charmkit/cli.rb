@@ -25,6 +25,10 @@ module Charmkit
       end
 
       hook.summon
+
+      if hook.respond_to? :test
+        hook.test
+      end
     end
 
     desc "update", "Update scrolls registry"
