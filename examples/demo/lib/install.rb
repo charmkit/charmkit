@@ -4,6 +4,6 @@ class Install < Charmkit::Hook
   use :nginx
 
   def summon
-    Nginx.add_host "www.example.com", :php
+    Nginx.add_host server: "www.example.com"
   end
 end

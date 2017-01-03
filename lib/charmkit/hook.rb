@@ -27,12 +27,9 @@ EOF
       # @param [Symbol] name symbol of scroll
       # @param [Hash] options (NotImplemented) Options to be passed to scroll
       def use(name, options = {})
-        require "charmkit/scrolls/#{name.to_s}"
-        name_ref = name
-        if options[:alias]
-          name_ref = options[:alias]
-        end
-        const_set(name_ref, to_const(name).new)
+        # require "charmkit/scrolls/#{name.to_s}"
+        require "./scrolls/#{name.to_s}"
+        const_set(name.to_s.classify, to_const(name.to_s).new)
       end
 
       private
