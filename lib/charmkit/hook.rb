@@ -26,12 +26,16 @@ module Charmkit
       def use(name, options = {})
         # require "charmkit/scrolls/#{name.to_s}"
         require "./scrolls/#{name.to_s}"
+        name_ref = name
+        if options[:alias]
+          name_ref = options[:alias]
+        end
 
         var_module = Module.new do
-          attr_accessor name.to_sym
+          attr_accessor name_ref.to_sym
         end
         extend var_module
-        set(name, to_const(name.to_s).new)
+        set(name_ref, to_const(name.to_s).new)
       end
 
       private

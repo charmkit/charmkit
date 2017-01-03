@@ -2,9 +2,9 @@ require 'charmkit'
 
 class Install < Charmkit::Hook
   use :nginx
-  use :php
+  use :php, alias: "pachep"
 
   nginx.add_host server: "bong.com"
-  php.setup_php hai: "stfu"
+  pachep.setup_php hai: "stfu"
   run! 'ls -l /tmp'
 end
