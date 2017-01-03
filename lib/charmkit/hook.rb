@@ -8,32 +8,41 @@ module Charmkit
       Dependencies
     end
 
-    # Summon main hook tasks
-    def summon
-      raise <<-EOF
-Tried to call summon for #{self.class.name} but the summon method does not
-exist in the Hook.
-EOF
-    end
-
     # Tests basic hooks like checking if a package got installed
     def test; end
+
 
     class << self
       include Helpers
 
       # Include scrolls to be used within hook execution
       #
+      # Note: Idea lifted from https://github.com/mckomo/metaxa
       # @param [Symbol] name symbol of scroll
       # @param [Hash] options (NotImplemented) Options to be passed to scroll
+      # @example
+      #   use :nginx
+      #   nginx.add_host server: "test.com"
       def use(name, options = {})
-        name = name.to_s
-        require "charmkit/scrolls/#{name.to_s}"
-        # require "./scrolls/#{name.to_s}"
-        const_set(name.classify, to_const(name).new)
+        # require "charmkit/scrolls/#{name.to_s}"
+        require "./scrolls/#{name.to_s}"
+
+        var_module = Module.new do
+          attr_accessor name.to_sym
+        end
+        extend var_module
+        set(name, to_const(name.to_s).new)
       end
 
       private
+      def get(variable)
+        instance_variable_get("@#{variable}")
+      end
+
+      def set(variable, value)
+        instance_variable_set("@#{variable}", value)
+      end
+
       def to_const(name)
         klass = name.classify
         klass.constantize

@@ -1,10 +1,7 @@
 require 'charmkit'
 
 class ConfigChanged < Charmkit::Hook
-  use :nginx
+  use :php
 
-  def summon
-    Nginx.add_host server_name: "config-changed"
-  end
-
+  php.setup_php site_path: "/srv"
 end

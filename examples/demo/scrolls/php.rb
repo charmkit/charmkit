@@ -3,7 +3,7 @@ require 'charmkit'
 class Php < Charmkit::Scroll
   depends_on "php-cgi"
 
-  def add_host(options = {})
-    puts "Adding #{options[:server_name]} for the php portion"
+  def setup_php(options = {})
+    puts "setting up php #{options}"
   end
 end

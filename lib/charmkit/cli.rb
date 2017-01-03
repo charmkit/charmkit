@@ -21,10 +21,8 @@ module Charmkit
       # So we handle our apt package installation here prior to any
       # other method execution.
       if defined? Install and hook.is_a? Install
-        hook.deps.install unless hook.deps.empty?
+        hook.deps.install
       end
-
-      hook.summon
 
       if hook.respond_to? :test
         hook.test

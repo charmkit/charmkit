@@ -2,8 +2,9 @@ require 'charmkit'
 
 class Install < Charmkit::Hook
   use :nginx
+  use :php
 
-  def summon
-    Nginx.add_host server: "www.example.com"
-  end
+  nginx.add_host server: "bong.com"
+  php.setup_php hai: "stfu"
+  run! 'ls -l /tmp'
 end
