@@ -1,7 +1,6 @@
 module Charmkit
   class Scroll
-    include Helpers
-    class << self
+    module ScrollBase
       include Helpers
 
       # Apt packages that the scroll requires
@@ -11,5 +10,6 @@ module Charmkit
         Dependencies << pkg
       end
     end
+    extend ScrollBase
   end
 end

@@ -1,18 +1,13 @@
-require 'charmkit/dependencies'
-
 module Charmkit
   class Hook
 
-    # Handles installation of any apt packages in the Dependencies class
-    def deps
-      Dependencies
-    end
+    # Perform instructions for hook
+    def summon; end
 
     # Tests basic hooks like checking if a package got installed
     def test; end
 
-
-    class << self
+    module Base
       include Helpers
 
       # Include scrolls to be used within hook execution
@@ -52,5 +47,6 @@ module Charmkit
         klass.constantize
       end
     end
+    extend Base
   end
 end

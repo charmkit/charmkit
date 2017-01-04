@@ -1,7 +1,8 @@
 require "active_support/core_ext/string/inflections"
+require 'pathname'
 require 'thor'
 require 'charmkit/helpers'
-require 'pathname'
+require 'charmkit/dependencies'
 
 module Charmkit
   class CLI < Thor
@@ -17,11 +18,12 @@ module Charmkit
       # Perform the Hook's tasks
       hook = Object.const_get(name.underscore.camelize.classify).new
 
-      # Install hook is a special case as it should only be run once.
-      # So we handle our apt package installation here prior to any
-      # other method execution.
       if defined? Install and hook.is_a? Install
-        hook.deps.install
+        Dependencies.install
+      end
+
+      if hook.respond_to? :summon
+        hook.summon
       end
 
       if hook.respond_to? :test
