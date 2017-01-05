@@ -47,7 +47,7 @@ Same for **hooks/upgrade-charm**
 ```
 #!/bin/sh
 
-bundle exec charmkit upgrade-charm
+bundle exec charmkit hook upgrade-charm
 ```
 
 ## Writing Charmkit style hooks
@@ -56,7 +56,7 @@ All Charmkit hooks must reside in the charm's toplevel **lib/** directory. Those
 files must match the name of the hook you want to assicate to and must end with
 a **.rb** extension.
 
-For example, if my hook runs `bundle exec charmkit config-changed` then in my
+For example, if my hook runs `bundle exec charmkit hook config-changed` then in my
 **lib/** directory should exist a file named **lib/config-changed.rb**.
 
 To start, you'll want to inherit from the **Charmkit** class. The class name should also
