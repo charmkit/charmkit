@@ -31,7 +31,7 @@ gem install bundler
 bundle install --local --quiet
 
 # Runs the lib/install.rb hook
-bundle exec charmkit install
+bundle exec charmkit hook install
 ```
 
 In other hooks call *charmkit* with the execing hook (eg. **hooks/config-changed**)
@@ -39,7 +39,7 @@ In other hooks call *charmkit* with the execing hook (eg. **hooks/config-changed
 ```
 #!/bin/sh
 
-bundle exec charmkit config-changed
+bundle exec charmkit hook config-changed
 ```
 
 Same for **hooks/upgrade-charm**
@@ -67,12 +67,10 @@ See the syntax below for a the **config-changed** hook being run:
 ### Syntax
 
 ```ruby
-require 'charmkit'
-
 class ConfigChanged < Charmkit::Hook
   use :nginx
 
-  def summon
+  summon do
     package [
         'php-fpm',      'php-cgi',      'php-curl', 'php-gd', 'php-json',
         'php-mcrypt', 'php-readline', 'php-mbstring', 'php-xml'
@@ -88,6 +86,10 @@ class ConfigChanged < Charmkit::Hook
 
     rm app_path/"conf/install.php"
     status :active, "Dokuwiki configuration updated."
+  end
+
+  test do
+    cmd.test '-e /etc/passwd'
   end
 end
 ```
