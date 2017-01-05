@@ -1,6 +1,7 @@
 require "active_support/core_ext/string/inflections"
 require 'pathname'
 require 'thor'
+require 'charmkit'
 require 'charmkit/helpers'
 require 'charmkit/dependencies'
 
@@ -14,21 +15,8 @@ module Charmkit
         puts "Could not find hook in ./lib/#{name}.rb"
         exit 1
       end
-
       # Perform the Hook's tasks
-      hook = Object.const_get(name.underscore.camelize.classify).new
-
-      if defined? Install and hook.is_a? Install
-        Dependencies.install
-      end
-
-      if hook.respond_to? :summon
-        hook.summon
-      end
-
-      if hook.respond_to? :test
-        hook.test
-      end
+      Object.const_get(name.underscore.camelize.classify)
     end
 
     desc "update", "Update scrolls registry"

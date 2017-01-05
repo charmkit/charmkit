@@ -1,10 +1,13 @@
-require 'charmkit'
-
 class Install < Charmkit::Hook
   use :nginx
-  use :php, alias: "pachep"
+  use :php, alias: "web"
 
+  summon do
+    nginx.add_host server: "bong.com"
+    web.setup_php hai: "stfu"
+  end
 
-  nginx.add_host server: "bong.com"
-  pachep.setup_php hai: "stfu"
+  test do
+    puts "running some tests"
+  end
 end

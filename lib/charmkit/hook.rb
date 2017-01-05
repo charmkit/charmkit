@@ -1,12 +1,5 @@
 module Charmkit
   class Hook
-
-    # Perform instructions for hook
-    def summon; end
-
-    # Tests basic hooks like checking if a package got installed
-    def test; end
-
     module Base
       include Helpers
 
@@ -31,6 +24,23 @@ module Charmkit
         end
         extend var_module
         set(name_ref, to_const(name.to_s).new)
+      end
+
+      # main block for executing instructions for hook
+      def summon(&block)
+        # Only force dep installs if during Install Hook
+        if self.name ==  "Install"
+          puts "Installing apt deps"
+          Dependencies.install
+        end
+        block.call if block_given?
+      end
+
+      # Test block for executing self checking tests after a summon occurs
+      def test(&block)
+        puts "### TEST"
+        block.call if block_given?
+        puts "### END TEST"
       end
 
       private
