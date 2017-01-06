@@ -1,2 +1,2 @@
 require 'charmkit/scroll'
-load './Charmkitfile'
+load './Charmkitfile
