@@ -3,31 +3,16 @@ require 'pathname'
 require 'thor'
 require 'charmkit'
 require 'charmkit/helpers'
-require 'charmkit/dependencies'
 
 module Charmkit
   class CLI < Thor
     desc "hook NAME", "execute a given hook"
     def hook(name)
-      if File.exists?("./lib/#{name}.rb")
-        require "./lib/#{name}"
+      if File.exists?("./Charmkitfile")
+        load "./Charmkitfile"
       else
-        puts "Could not find hook in ./lib/#{name}.rb"
+        puts "Could not find a Charmkitfile"
         exit 1
-      end
-      # Perform the Hook's tasks
-      Object.const_get(name.underscore.camelize.classify)
-    end
-
-    desc "update", "Update scrolls registry"
-    def update
-      cache_path = Pathname(ENV['HOME'])/'.cache/'
-      registry_path = cache_path.join('charmkit-scrolls')
-      if registry_path.directory? and registry_path.join('.git').directory?
-        system "cd #{registry_path} && git pull -q"
-      else
-        cache_path.mkpath
-        system "cd #{cache_path} && git clone -q --depth=1 https://github.com/charmkit/charmkit-scrolls.git"
       end
     end
 
