@@ -38,6 +38,16 @@ module Charmkit
       return out.chomp
     end
 
+    def relation(item)
+      out, err = cmd.run "relation-get '#{item}'"
+      return out.chomp
+    end
+
+    def relation=(key, item)
+      out, err = cmd.run "relation-set '#{key}=#{item}'"
+      return out.chomp
+    end
+
     def log(msg)
       cmd.run "juju-log #{msg}"
     end

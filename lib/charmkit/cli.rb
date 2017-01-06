@@ -95,8 +95,8 @@ class Install < Charmkit::Hook
   # You have access to the scrolls based on the constant name
   # ie. the symbol :nginx would translate to the constant Nginx, see below
   # for an example
-  def summon
-    Nginx.add_host server_name: "www.example.com"
+  summon do
+    nginx.add_host server_name: "www.example.com"
   end
 end
 
@@ -105,11 +105,11 @@ end
 apt-get update && apt-get install -qyf ruby bundler --no-install-recommends
 bundle install --local --quiet --without development
 # Do install task
-bundle exec charmkit install
+bundle exec charmkit hook install
 
 @@ generic-hook
 #!/bin/sh
-bundle exec charmkit <%= hook %>
+bundle exec charmkit hook <%= hook %>
 
 @@ config.yaml
 options: {}
