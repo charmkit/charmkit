@@ -3,6 +3,7 @@ require 'charmkit'
 desc "Install hook"
 task :install do
   use :nginx
+  nginx.add_host "test", :php
   deps.install
 end
 
