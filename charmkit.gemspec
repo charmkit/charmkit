@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "charmkit"
-  spec.version       = "1.0.2"
+  spec.version       = "1.0.0"
   spec.authors       = ["Adam Stokes"]
   spec.email         = ["battlemidget@users.noreply.github.com"]
 
@@ -23,6 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "tty-command", "~> 0.2.0"
   spec.add_dependency "activesupport"
   spec.add_dependency "thor"
+  spec.add_dependency "rake"
 
   spec.add_development_dependency "bundler", "~> 1.13"
   spec.add_development_dependency "rake", "~> 10.0"
