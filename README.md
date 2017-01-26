@@ -25,21 +25,20 @@ In **hooks/install**:
 #!/bin/sh
 
 apt-get update
-apt-get install -qyf ruby --no-install-recommends
+apt-get install -qyf ruby bundler --no-install-recommends
 gem install bundler
 
-bundle install --local --quiet
+bundle install --local --quiet --without development
 
-# Runs the lib/install.rb hook
-bundle exec charmkit hook install
+bundle exec rake dokuwiki:install
 ```
 
-In other hooks call *charmkit* with the execing hook (eg. **hooks/config-changed**)
+In other hooks call relevant rake tasks (eg. **hooks/config-changed**)
 
 ```
 #!/bin/sh
 
-bundle exec charmkit hook config-changed
+bundle exec rake dokuwiki:config_changed
 ```
 
 Same for **hooks/upgrade-charm**
@@ -47,78 +46,96 @@ Same for **hooks/upgrade-charm**
 ```
 #!/bin/sh
 
-bundle exec charmkit hook upgrade-charm
+bundle exec rake dokuwiki:upgrace_charm
 ```
 
 ## Writing Charmkit style hooks
 
-All Charmkit hooks must reside in the charm's toplevel **lib/** directory. Those
-files must match the name of the hook you want to assicate to and must end with
-a **.rb** extension.
-
-For example, if my hook runs `bundle exec charmkit hook config-changed` then in my
-**lib/** directory should exist a file named **lib/config-changed.rb**.
-
-To start, you'll want to inherit from the **Charmkit** class. The class name should also
-reflect the name of the hook being executed and should be in a standard Ruby camelcase style.
-
-See the syntax below for a the **config-changed** hook being run:
+All Charmkit hooks will reside in a normal **Rakefile**.
 
 ### Syntax
 
 ```ruby
-class ConfigChanged < Charmkit::Hook
-  use :nginx
+require 'charmkit'
 
-  summon do
-    package [
-        'php-fpm',      'php-cgi',      'php-curl', 'php-gd', 'php-json',
-        'php-mcrypt', 'php-readline', 'php-mbstring', 'php-xml'
-    ], :update_cache
+namespace :dokuwiki do
 
+  desc "Install Dokuwiki"
+  task :install do
+    use :nginx
+    use :php
+
+    deps.install
+
+    app_path = config 'app_path'
+    resource_path = resource 'stable-release'
     hook_path = ENV['JUJU_CHARM_DIR']
-    app_path = path(config('app_path'))
 
-    mkdir app_path
+    mkdir_p app_path
 
-    resource_path = path(resource('stable-release'))
-    run "tar xf #{resource_path} -C #{app_path} --strip-components=1"
+    run "tar", "xf", resource_path, "-C", app_path, "--strip-components=1"
 
-    rm app_path/"conf/install.php"
-    status :active, "Dokuwiki configuration updated."
+    cp "#{hook_path}/templates/acl.auth.php", "#{app_path}/conf/acl.auth.php"
+    cp "#{hook_path}/templates/local.php", "#{app_path}/conf/local.php"
+    cp "#{hook_path}/templates/plugins.local.php", "#{app_path}/conf/plugin.local.php"
+
+    version = File.read "#{app_path}/VERSION"
+    run "application-version-set", version.chomp
+    status :active, "Dokuwiki installed, please set your admin user and password with juju config dokuwiki admin_user=<an_admin_name> admin_password=<sha512 password>"
   end
 
-  test do
-    cmd.test '-e /etc/passwd'
+  desc "Configure Dokuwiki"
+  task :config_changed do
+    app_path = config 'app_path'
+    hook_path = ENV['JUJU_CHARM_DIR']
+
+    admin_user = config 'admin_user'
+    admin_password = config 'admin_password'
+    admin_name = config 'admin_name'
+    admin_email = config 'admin_email'
+    template "#{hook_path}/templates/users.auth.php",
+             "#{app_path}/conf/users.auth.php",
+             admin_user: admin_user,
+             admin_password: admin_password,
+             admin_name: admin_name,
+             admin_email: admin_email
+
+    public_address = unit 'public-address'
+    template "#{hook_path}/templates/vhost.conf",
+             "/etc/nginx/sites-enabled/default",
+             public_address: public_address,
+             app_path: app_path
+
+    chown_R 'www-data', 'www-data', app_path
+
+    run "systemctl restart php7.0-fpm"
+    run "systemctl restart nginx"
+    run "open-port 80"
+    status :active, "Dokuwiki updated and is now ready."
   end
 end
+
+task :default => 'dokuwiki:install'
 ```
 
-The core of Charmkit is relatively small and everything is handled through
-scrolls (read
-plugins). [Visit Charmkit Scrolls](https://github.com/charmkit/charmkit-scrolls)
-for more information.
+The core of Charmkit contains a few helpers such as template rendering but otherwise kept relatively small.
 
 
 ## Packaging the Charm
 
 ```
-$ bundle exec charmkit build
+$ bundle package
 ```
 
 This will package and cache all required gems, along with making sure the necessary
-scrolls are included. The output will be a charm that you can deploy via:
-
-```
-$ juju deploy dist/.
-```
+scrolls are included.
 
 ## Uploading to charm store
 
 Once the charm is built simply run:
 
 ```
-$ charm push dist/.
+$ charm push .
 ```
 
 ## Development
