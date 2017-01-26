@@ -1,5 +1,6 @@
 module Charmkit
   module Base
+    include Dependencies
     include Helpers
 
     # Include scrolls to be used within hook execution
