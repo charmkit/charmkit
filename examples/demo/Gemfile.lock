@@ -6,9 +6,9 @@ GIT
 
 GIT
   remote: git://github.com/charmkit/charmkit.git
-  revision: fc3a425afca1ad22ce36ac8afe304d5a663b6930
+  revision: 6d822eea0ae3ed5d0147ed0ca590af1812c1c067
   specs:
-    charmkit (1.0.1)
+    charmkit (1.0.2)
       activesupport
       thor
       tty-command (~> 0.2.0)
