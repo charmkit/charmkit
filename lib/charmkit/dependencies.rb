@@ -9,9 +9,7 @@ module Charmkit
     end
 
     def self.install
-      # TODO: Should be a dependency class with options for
-      # installing groups, recommended packages, and snaps
-      puts "Installing #{@@deps.join(' ')}"
+      `apt-get install -qyf #{@@deps.join(' ')}`
     end
 
     def self.<<(o)
