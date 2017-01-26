@@ -3,6 +3,6 @@ require 'charmkit'
 desc "Install hook"
 task :install do
   use :nginx
-  Dependencies.install
+  deps.install
 end
 

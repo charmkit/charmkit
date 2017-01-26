@@ -24,6 +24,12 @@ module Charmkit
       set(name_ref, to_const(name.to_s).new)
     end
 
+    # Access deps class
+    #
+    def deps
+      Dependencies
+    end
+
     private
     def get(variable)
       instance_variable_get("@#{variable}")
