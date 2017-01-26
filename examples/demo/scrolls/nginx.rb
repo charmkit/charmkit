@@ -1,7 +1,0 @@
-class Nginx < Charmkit::Scroll
-  depends_on "nginx-full"
-
-  def add_host(options = {})
-    puts "Adding #{options}"
-  end
-end

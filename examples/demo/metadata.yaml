@@ -1,0 +1,9 @@
+name: demo
+summary: |
+  <<insert summary>>
+description: |
+  <<insert description>>
+maintainers: ['']
+series:
+  - xenial
+

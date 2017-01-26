@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+source "https://rubygems.org"
+
+gem "charmkit", :github => "charmkit/charmkit"
+gem "rake"
+gem "rspec"
+
+# If you wish to load additional scrolls add those here
+gem "charmkit-scroll-nginx", :github => "charmkit/charmkit-scrolls-nginx"
+
