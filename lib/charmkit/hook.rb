@@ -1,6 +1,5 @@
 module Charmkit
   module Base
-    include Dependencies
     include Helpers
 
     # Include scrolls to be used within hook execution
@@ -13,7 +12,6 @@ module Charmkit
     #   nginx.add_host server: "test.com"
     def use(name, options = {})
       require "charmkit/scrolls/#{name.to_s}"
-      # require "./scrolls/#{name.to_s}"
       name_ref = name
       if options[:alias]
         name_ref = options[:alias]

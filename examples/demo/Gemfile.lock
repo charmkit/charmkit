@@ -6,7 +6,7 @@ GIT
 
 GIT
   remote: git://github.com/charmkit/charmkit.git
-  revision: 34ecf325d7e8d3483228dbaadaecf6415532a6ad
+  revision: 621c0d7c878dcf5a72f6cfca4f1080a919899fbf
   specs:
     charmkit (1.0.2)
       activesupport

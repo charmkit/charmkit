@@ -9,6 +9,12 @@ module Charmkit
       def depends_on(pkg)
         Dependencies << pkg
       end
+
+      # Install deps
+      #
+      def deps
+        Dependencies
+      end
     end
     extend ScrollBase
   end
