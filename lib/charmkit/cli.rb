@@ -59,7 +59,7 @@ gem "rake"
 gem "rspec"
 
 # If you wish to load additional scrolls add those here
-# gem "charmkit-scroll-nginx", :github => "battlemidget/charmkit-scroll-nginx"
+# gem "charmkit-scrolls-nginx", :github => "battlemidget/charmkit-scrolls-nginx"
 
 @@ Rakefile
 require 'charmkit'
@@ -105,11 +105,35 @@ My charm Overview
 
 # Developers
 
-How developers can contribute
+This charm uses Rake (a make like utility) for defining hooks and can be seen in
+the **Rakefile**. It also uses a simple library **Charmkit** for providing some
+additional helper methods such as templating.
+
+To learn more visit [Charmkit](https://github.com/charmkit/charmkit).
 
 # Maintainers
 
-How QA and others can test your charm
+## Testing
+
+The tests cover installation and verification that your charm is installed and
+running correctly.
+
+## Ways to run the tests
+
+### Use bundletester
+
+```
+sudo bundletester -F -t cs:~charmers/charm -l DEBUG -v -r json -o /tmp/results.json
+```
+
+### Run tests via Ruby bundler
+
+```
+bundle install --local --with development
+bundle exec ./tests/verify
+```
+
+A few package dependencies are required for testing locally, have a look in **tests/tests.yaml** for those package names.
 
 # Author
 
@@ -117,7 +141,7 @@ Your name <mememe@email.com>
 
 # Copyright
 
-2016 Your name
+2017 Your name
 
 # License
 
