@@ -7,6 +7,14 @@ require 'charmkit/dependencies'
 
 module Charmkit
   class CLI < Thor
+    desc "build", "builds a charm"
+    def build
+      pn = Pathname('Charmkitfile')
+      if pn.exist?
+        puts "Building charm"
+      end
+    end
+
     desc "generate NAME", "generate a charm skelton"
     def generate(name)
       pn = Pathname(name)

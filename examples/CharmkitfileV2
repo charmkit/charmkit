@@ -1,0 +1,44 @@
+# -*- mode:toml -*-
+
+name = "ghost"
+summary = "Ghost is a simple, powerful publishing platform."
+description = "Ghost is a simple, powerful publishing platform."
+maintainers = ["Adam Stokes <adam.stokes@ubuntu.com>"]
+series = ["xenial"]
+tags = ["nodejs", "javascript", "blog"]
+
+[requires]
+    [requires.database]
+    interface = "mysql"
+
+[resources]
+    [resources.ghost_stable]
+    type = "file"
+    filename = "ghost.zip"
+    description = "Ghost stable release source"
+
+[options]
+    [options.url]
+    description = "URL for ghost"
+    type = "string"
+    default = "http://localhost/blog"
+
+    [options.host]
+    description = "Host to be passed to nodes net.Server listen()"
+    type = "string"
+    default = "0.0.0.0"
+
+    [options.port]
+    description = "Port"
+    type = "int"
+    default = 2368
+
+# Charm dependencies
+[deps]
+    [deps.nginx]
+    version = "~10"
+    configflags = ["--datarootdir=/snap/conjure-up/current/", "--prefix=/usr"]
+
+    [deps.ghost]
+    scriptlet = """
+cd $HOME && tar xvf Ghost-stable.tar.gz"""
