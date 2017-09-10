@@ -1,0 +1,7 @@
+# -*- mode:ruby -*-
+
+require 'charmkit'
+
+react_when 'nginx.available,!ghost.nginx.configured' do
+  puts "reacting"
+end
