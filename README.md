@@ -32,7 +32,7 @@ apt-get install -qyf ruby bundler --no-install-recommends
 
 bundle install --local --quiet --without development
 
-bundle exec rake dokuwiki:install
+bundle exec charmkit dokuwiki install
 ```
 
 In other hooks call the relevant rake tasks, for example, in
@@ -41,7 +41,7 @@ In other hooks call the relevant rake tasks, for example, in
 ```
 #!/bin/sh
 
-bundle exec rake dokuwiki:config_changed
+bundle exec charmkit dokuwiki config-changed
 ```
 
 Same for **hooks/upgrade-charm**
@@ -49,10 +49,12 @@ Same for **hooks/upgrade-charm**
 ```
 #!/bin/sh
 
-bundle exec rake dokuwiki:install
+bundle exec charmkit dokuwiki install
 ```
 
 ## Writing Charmkit style hooks
+
+_TBD: Needs updating as rakefile's are being migrated to Thor_
 
 All Charmkit hooks will reside in a normal **Rakefile**.
 

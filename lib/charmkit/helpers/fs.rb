@@ -48,9 +48,9 @@ module Charmkit
     #   package ['nginx-full'], :update_cache
     def package(packages, *opts)
       if opts.include?(:update_cache)
-        cmd.run "apt-get update"
+        sh "apt-get update"
       end
-      cmd.run "apt-get install -qyf #{packages.join(' ')}"
+      sh "apt-get install -qyf #{packages.join(' ')} --no-install-recommends"
     end
 
     # Checks if a package is installed

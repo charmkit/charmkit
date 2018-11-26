@@ -3,7 +3,7 @@ require 'tty-command'
 module Charmkit
   module Helpers
     extend Forwardable
-    def_delegators :cmd, :run, :run!, :test
+    def_delegators :cmd, :sh, :sh!, :test
 
     def cmd
       if ENV['DRYRUN']
@@ -12,5 +12,6 @@ module Charmkit
         TTY::Command.new
       end
     end
+
   end
 end

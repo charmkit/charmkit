@@ -10,36 +10,36 @@ module Charmkit
     def status(level=:maintenance, msg="")
       levels = [:maintenance, :active, :blocked, :waiting]
       raise unless levels.include?(level)
-      cmd.run "status-set #{level.to_s} '#{msg}'"
+      sh "status-set #{level.to_s} '#{msg}'"
     end
 
     def config(item)
-      out, err = cmd.run "config-get '#{item}'"
+      out, err = sh "config-get '#{item}'"
       return out.chomp
     end
 
     def resource(item)
-      out, err = cmd.run "resource-get '#{item}'"
+      out, err = sh "resource-get '#{item}'"
       return out.chomp
     end
 
     def unit(item)
-      out, err = cmd.run "unit-get '#{item}'"
+      out, err = sh "unit-get '#{item}'"
       return out.chomp
     end
 
     def action(item)
-      out, err = cmd.run "action-get '#{item}'"
+      out, err = sh "action-get '#{item}'"
       return out.chomp
     end
 
     def action=(item)
-      out, err = cmd.run "action-set '#{item}'"
+      out, err = sh "action-set '#{item}'"
       return out.chomp
     end
 
     def log(msg)
-      cmd.run "juju-log #{msg}"
+      sh "juju-log #{msg}"
     end
   end
 end
